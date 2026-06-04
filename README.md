@@ -16,3 +16,12 @@ Activate the virtual environment (if not already activated):
 source venv/bin/activate
 ```
 
+Run the app:
+```bash
+uvicorn app:app --reload
+```
+
+Then visit:
+```bash
+http://127.0.0.1:8000
+```
