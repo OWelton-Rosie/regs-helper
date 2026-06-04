@@ -1,7 +1,7 @@
 from openai import OpenAI
 from dotenv import load_dotenv
 
-from search import search
+from ai.search import search
 
 load_dotenv()
 

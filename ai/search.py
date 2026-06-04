@@ -6,7 +6,16 @@ import numpy as np
 load_dotenv()
 client = OpenAI()
 
-with open("embeddings.json", "r", encoding="utf-8") as f:
+from pathlib import Path
+
+
+DATA_DIR = Path(__file__).parent / "data"
+
+with open(
+    DATA_DIR / "embeddings.json",
+    "r",
+    encoding="utf-8"
+) as f:
     chunks = json.load(f)
 
 

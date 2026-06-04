@@ -9,9 +9,13 @@ async function askQuestion() {
     const sourcesDiv =
         document.getElementById("sources");
 
+    // Show answer box while loading
+    answerDiv.style.display = "block";
     answerDiv.innerText =
         "Searching regulations...";
 
+    // Hide sources until we have results
+    sourcesDiv.style.display = "none";
     sourcesDiv.innerHTML = "";
 
     try {
@@ -33,18 +37,19 @@ async function askQuestion() {
             html += `
                 <details>
                     <summary>${source.id}</summary>
-
                     <p>${source.text}</p>
                 </details>
             `;
         });
 
         sourcesDiv.innerHTML = html;
+        sourcesDiv.style.display = "block";
 
     } catch (error) {
 
         console.error(error);
 
+        answerDiv.style.display = "block";
         answerDiv.innerText =
             "Something went wrong.";
     }

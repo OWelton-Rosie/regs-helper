@@ -1,33 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-NZ">
 <head>
-    <title>WCA Regulations Assistant</title>
-
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-
-<div class="container">
-
-    <!DOCTYPE html>
-<html>
-<head>
-
-    <title>WCA Regulations Assistant</title>
+    <meta charset="utf-8">
+    <title>(BETA) WCA Regulations Assistant</title>
 
     <link rel="stylesheet" href="/static/style.css">
 
+    <link rel="icon" href="/static/favicon.webp">
 </head>
 
 <body>
 
 <div class="container">
 
-    <h1>WCA Regulations Assistant</h1>
+    <h1>(BETA) WCA Regulations Assistant</h1>
+
+    <p class="subtitle">
+        Ask questions about the WCA Regulations and Guidelines.
+    </p>
 
     <textarea
         id="question"
-        placeholder="Ask a WCA regulations question..."
+        placeholder="Example: What is a +2?"
     ></textarea>
 
     <button onclick="askQuestion()">
@@ -39,6 +33,12 @@
     <div id="sources"></div>
 
 </div>
+
+<footer>
+    <p><a href="legal.html">Legal info</a>. <a href="about.html">About this app</a>.</p>
+
+    </p>Built by <a href="https://oweltonrosie.com" target="_blank" rel="noopener noreferrer">Oscar Welton-Rosie</a>. Source code on <a href="https://github.com/OWelton-Rosie/regs-helper" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+</footer>
 
 <script src="/static/app.js"></script>
 

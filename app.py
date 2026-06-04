@@ -3,10 +3,11 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from ask import ask
+from ai.ask import ask
 
 app = FastAPI()
 
+# Serve CSS, JS, images, etc.
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
@@ -16,14 +17,26 @@ templates = Jinja2Templates(directory="templates")
 async def home(request: Request):
 
     return templates.TemplateResponse(
-        request=request,
-        name="index.html"
+        "index.html",
+        {"request": request}
+    )
+
+@app.get("/legal.html")
+async def legal(request: Request):
+    return templates.TemplateResponse(
+        "legal.html",
+        {"request": request}
+    )
+
+@app.get("/about.html")
+async def legal(request: Request):
+    return templates.TemplateResponse(
+        "about.html",
+        {"request": request}
     )
 
 
 @app.get("/ask")
 async def ask_question(question: str):
 
-    result = ask(question)
-
-    return result
+    return ask(question)

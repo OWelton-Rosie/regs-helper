@@ -1,4 +1,4 @@
-# On startup:
+# `regs-helper`
 
 Clone the project:
 ```bash
