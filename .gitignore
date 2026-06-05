@@ -2,7 +2,9 @@
 venv/
 .DS_Store
 __pycache__
-logs/
+
+#logs
+ai/questions.db
 
 # announcement file I'm working on
 announcement.md
