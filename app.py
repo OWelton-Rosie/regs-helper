@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 from fastapi import (
     FastAPI,
     Request,
-    Form
+    Form,
+    HTTPException
 )
 
 from fastapi.responses import HTMLResponse
@@ -19,6 +20,8 @@ from ai.database import (
     log_question,
     get_recent_questions
 )
+
+from ai.rate_limit import is_rate_limited
 
 # NOTE:
 # This file contains FastAPI routing and Jinja template configuration.
@@ -78,11 +81,24 @@ async def about(request: Request):
 
 # API endpoint used by frontend JavaScript
 @app.get("/ask")
-async def ask_question(question: str):
+async def ask_question(
+    request: Request,
+    question: str
+):
+
+    ip = request.client.host
+
+    if is_rate_limited(ip):
+
+        raise HTTPException(
+            status_code=429,
+            detail="Rate limit exceeded. Please try again later."
+        )
 
     result = ask(question)
 
     log_question(
+        ip,
         question,
         result["answer"]
     )

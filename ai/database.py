@@ -17,6 +17,7 @@ def initialize_database():
         CREATE TABLE IF NOT EXISTS questions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp TEXT NOT NULL,
+            ip_address TEXT NOT NULL,
             question TEXT NOT NULL,
             answer TEXT NOT NULL
         )
@@ -27,6 +28,7 @@ def initialize_database():
 
 
 def log_question(
+    ip_address: str,
     question: str,
     answer: str
 ):
@@ -36,11 +38,17 @@ def log_question(
     conn.execute(
         """
         INSERT INTO questions
-        (timestamp, question, answer)
-        VALUES (?, ?, ?)
+        (
+            timestamp,
+            ip_address,
+            question,
+            answer
+        )
+        VALUES (?, ?, ?, ?)
         """,
         (
             datetime.now().isoformat(),
+            ip_address,
             question,
             answer
         )
@@ -56,7 +64,11 @@ def get_recent_questions(limit=50):
 
     rows = conn.execute(
         """
-        SELECT timestamp, question, answer
+        SELECT
+            timestamp,
+            ip_address,
+            question,
+            answer
         FROM questions
         ORDER BY id DESC
         LIMIT ?

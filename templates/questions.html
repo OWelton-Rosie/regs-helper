@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
 
-    <title>Recent Questions</title>
+    <title>Logs</title>
 
     <link rel="icon" href="/static/favicon.webp">
     <link rel="stylesheet" href="/static/style.css">
@@ -15,25 +15,34 @@
 
     <h1>Recent Questions</h1>
 
+    <p>
+        <a href="/">← Back to App</a>
+    </p>
+
     {% for row in questions %}
 
-        <details>
+    <details>
 
-            <summary>
-                {{ row[0] }}
-            </summary>
+        <summary>
+            {{ row[0] }}
+        </summary>
 
-            <p>
-                <strong>Question:</strong><br>
-                {{ row[1] }}
-            </p>
+        <p>
+            <strong>IP Address</strong><br>
+            {{ row[1] }}
+        </p>
 
-            <p>
-                <strong>Answer:</strong><br>
-                {{ row[2] }}
-            </p>
+        <p>
+            <strong>Question</strong><br>
+            {{ row[2] }}
+        </p>
 
-        </details>
+        <p>
+            <strong>Answer</strong><br>
+            {{ row[3] }}
+        </p>
+
+    </details>
 
     {% endfor %}
 
