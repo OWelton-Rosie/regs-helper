@@ -50,7 +50,7 @@ def search(query, top_k=5):
             chunk["embedding"]
         )
 
-        # Keyword boosts
+        # Keyword boosts to improve relevance for certain terms - this is a bit of a bitch but seems to work
         if "+2" in query_lower and "+2" in text_lower:
             score += 1.0
 

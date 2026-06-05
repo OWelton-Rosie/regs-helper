@@ -7,6 +7,7 @@ load_dotenv()
 
 client = OpenAI()
 
+# prompt for ai agent
 SYSTEM_PROMPT = """
 You are an assistant for the World Cube Association Regulations.
 
@@ -40,7 +41,7 @@ def ask(question):
 )
 
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4o-mini", # using this model as it's cheap and seems to work well
         messages=[
             {
                 "role": "system",

@@ -81,3 +81,9 @@ a:hover,
 a:visited:hover {
     text-decoration: underline;
 }
+
+details p {
+    white-space: pre-wrap;
+    line-height: 1.5;
+    padding-left: 1rem;
+}

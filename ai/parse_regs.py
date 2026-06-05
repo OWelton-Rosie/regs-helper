@@ -1,3 +1,5 @@
+# parse regulations.txt into chunks.json for embedding and searching
+
 import re
 import json
 
