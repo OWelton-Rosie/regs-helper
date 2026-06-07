@@ -25,3 +25,5 @@ Then visit:
 ```bash
 http://127.0.0.1:8000
 ```
+
+Running the app requires you to have an OpenAI API key and an admin password to access the logs. .env.test contains an example of the syntax. Copy the file, rename it to `.env`, and populate the values with your own ones.
