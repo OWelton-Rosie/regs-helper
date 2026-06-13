@@ -1,4 +1,6 @@
 <script>
+	import Header from '$lib/components/Header.svelte';
+
 	const API_URL = import.meta.env.VITE_API_URL;
 
 	let password = $state('');
@@ -29,7 +31,7 @@
 
 			if (!response.ok) {
 
-				error = 'How the fuck did you get that wrong?';
+				error = 'Incorrect password';
 				return;
 			}
 
@@ -48,15 +50,30 @@
 	async function loadQuestions() {
 
 		const response = await fetch(
-			`${API_URL}/questions`
+			`${API_URL}/questions`,
+			{
+				method: 'POST',
+
+				headers: {
+					'Content-Type': 'application/json'
+				},
+
+				body: JSON.stringify({
+					password
+				})
+			}
 		);
+
+		if (!response.ok) {
+
+			error = 'Failed to load questions';
+			return;
+		}
 
 		const data = await response.json();
 
 		questions = data.questions;
 	}
-
-        import Header from '$lib/components/Header.svelte';
 </script>
 
 <Header />
@@ -64,7 +81,10 @@
 <div class="container">
 
 	<h1>Hi Oscar!</h1>
-    <p>Enter your password to view the logs.</p>
+
+	<p>
+		Enter your password to view the logs.
+	</p>
 
 	{#if !loggedIn}
 

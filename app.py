@@ -37,7 +37,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "https://regs.oweltonrosie.com"
+        "https://regs.oweltonrosie.com",
+        "https://api.regs.oweltonrosie.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -105,11 +106,20 @@ async def login(
     }
 
 
-@app.get("/questions")
-async def questions():
+@app.post("/questions")
+async def questions(
+    data: dict = Body(...)
+):
 
-    rows = get_recent_questions()
+    password = data.get("password")
+
+    if password != ADMIN_PASSWORD:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect password"
+        )
 
     return {
-        "questions": rows
+        "questions": get_recent_questions()
     }
