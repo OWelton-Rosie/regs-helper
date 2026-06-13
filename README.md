@@ -1,10 +1,14 @@
 # `regs-helper`
-This app runs on a Python backend and a SvelteKit frontend.
+
+## Running the app locally
+This app runs on a Python backend and a SvelteKit frontend. Thus, the app needs two different processes to run it locally.
 
 Clone the project and navigate to it:
 ```bash
 git clone https://github.com/OWelton-Rosie/regs-helper && cd regs-helper
 ```
+
+### 1. Get the backend going:
 
 Install the dependencies with pip:
 ```bash
@@ -18,16 +22,20 @@ source venv/bin/activate
 ```
 To verify that this works, check your console. The text `(venv)` should appear at the start of your shell, eg: `(venv) oscarwelton-rosie@Oscars-MacBook-Air regs-helper % `.
 
-Run the backend:
+Finally, run the backend:
 ```bash
 uvicorn app:app --reload
 ```
 
-In a new terminal window (make sure you're cd'd to the `regs-helper` directory) get the SvelteKit frontend going:
+### 2. Get the frontend firing;
+In a new terminal window (make sure you're cd'd to the `regs-helper` directory):
+
+Naviagate to the frontend directory:
 ```bash
 cd frontend
 ```
 
+Run the dev server:
 ```bash
 npm install && npm run dev
 ```
@@ -44,6 +52,10 @@ You can sign up to the OpenAI API [here](https://openai.com/api/).
 
 
 ## Updating the app after regulation changes:
-- Copy and paste the latest relased version of the regs into `ai/data/regulations.txt`
-- Run `python3 ai/parse_regs.py`
-- Check `ai/data/chunks.json` and `ai/data/embeddings.json` to verify that it worked
+1. Copy and paste the latest relased version of the regs into `ai/data/regulations.txt`
+2. Run:
+```
+python3 ai/parse_regs.py
+```
+3. Check `ai/data/chunks.json` and `ai/data/embeddings.json` and ask some questions to check that it worked
+4. Commit and push as normal

@@ -5,13 +5,11 @@ from dotenv import load_dotenv
 from fastapi import (
     FastAPI,
     Request,
-    Form,
-    HTTPException
+    HTTPException,
+    Body
 )
 
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 
 from ai.ask import ask
 
@@ -23,15 +21,6 @@ from ai.database import (
 
 from ai.rate_limit import is_rate_limited
 
-# NOTE:
-# This file contains FastAPI routing and Jinja template configuration.
-#
-# If template rendering suddenly starts throwing bizarre errors,
-# check Starlette and Jinja versions before changing any code.
-#
-# A Starlette/Jinja version mismatch previously caused template
-# rendering to fail with obscure errors despite valid templates.
-
 load_dotenv()
 
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
@@ -40,46 +29,25 @@ app = FastAPI()
 
 initialize_database()
 
-# Serve CSS, JS and images
-app.mount(
-    "/static",
-    StaticFiles(directory="static"),
-    name="static"
+# -------------------------
+# CORS
+# -------------------------
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "https://regs.oweltonrosie.com"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-templates = Jinja2Templates(
-    directory="templates"
-)
+# -------------------------
+# Main API
+# -------------------------
 
-
-@app.get("/", response_class=HTMLResponse)
-async def home(request: Request):
-
-    return templates.TemplateResponse(
-        "index.html",
-        {"request": request}
-    )
-
-
-@app.get("/legal.html", response_class=HTMLResponse)
-async def legal(request: Request):
-
-    return templates.TemplateResponse(
-        "legal.html",
-        {"request": request}
-    )
-
-
-@app.get("/about.html", response_class=HTMLResponse)
-async def about(request: Request):
-
-    return templates.TemplateResponse(
-        "about.html",
-        {"request": request}
-    )
-
-
-# API endpoint used by frontend JavaScript
 @app.get("/ask")
 async def ask_question(
     request: Request,
@@ -106,39 +74,42 @@ async def ask_question(
     return result
 
 
-@app.get("/admin", response_class=HTMLResponse)
-async def admin_login(request: Request):
+@app.get("/health")
+async def health():
 
-    return templates.TemplateResponse(
-        "admin_login.html",
-        {
-            "request": request
-        }
-    )
+    return {
+        "status": "ok"
+    }
 
 
-@app.post("/admin", response_class=HTMLResponse)
-async def admin_questions(
-    request: Request,
-    password: str = Form(...)
+# -------------------------
+# Admin API
+# -------------------------
+
+@app.post("/login")
+async def login(
+    data: dict = Body(...)
 ):
+
+    password = data.get("password")
 
     if password != ADMIN_PASSWORD:
 
-        return templates.TemplateResponse(
-            "admin_login.html",
-            {
-                "request": request,
-                "error": "Incorrect password"
-            }
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect password"
         )
 
-    questions = get_recent_questions()
+    return {
+        "success": True
+    }
 
-    return templates.TemplateResponse(
-        "questions.html",
-        {
-            "request": request,
-            "questions": questions
-        }
-    )
+
+@app.get("/questions")
+async def questions():
+
+    rows = get_recent_questions()
+
+    return {
+        "questions": rows
+    }
