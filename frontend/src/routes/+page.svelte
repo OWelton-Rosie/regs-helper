@@ -3,27 +3,45 @@
 	let answer = $state('');
 	let sources = $state([]);
 	let loading = $state(false);
+	let warmingUp = $state(false);
 
 	async function ask() {
+
 		loading = true;
+		warmingUp = false;
+
+		answer = '';
+		sources = [];
+
+		const timeout = setTimeout(() => {
+			warmingUp = true;
+		}, 5000);
 
 		try {
+
 			const response = await fetch(
-	    `${import.meta.env.VITE_API_URL}/ask?question=${encodeURIComponent(question)}`
-        );
+				`${import.meta.env.VITE_API_URL}/ask?question=${encodeURIComponent(question)}`
+			);
 
 			const data = await response.json();
 
 			answer = data.answer;
 			sources = data.sources;
+
 		} catch (err) {
+
 			console.error(err);
 
 			answer = 'Something went wrong.';
 			sources = [];
-		}
 
-		loading = false;
+		} finally {
+
+			clearTimeout(timeout);
+
+			loading = false;
+			warmingUp = false;
+		}
 	}
 </script>
 
@@ -45,10 +63,18 @@
 	</button>
 
 	{#if loading}
-		<p class="loading">
-			Searching regulations...
+
+	<p class="loading">
+		Searching regulations...
+	</p>
+
+	{#if warmingUp}
+		<p class="warming-up">
+			This is taking longer than usual. The server may be starting up.
 		</p>
 	{/if}
+
+{/if}
 
 	{#if answer}
 

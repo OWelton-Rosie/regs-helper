@@ -27,7 +27,7 @@ Finally, run the backend:
 uvicorn app:app --reload
 ```
 
-### 2. Get the frontend firing;
+### 2. Get the frontend firing:
 In a new terminal window (make sure you're cd'd to the `regs-helper` directory):
 
 Naviagate to the frontend directory:
@@ -59,3 +59,6 @@ python3 ai/parse_regs.py
 ```
 3. Check `ai/data/chunks.json` and `ai/data/embeddings.json` and ask some questions to check that it worked
 4. Commit and push as normal
+
+## Status updates
+Check [https://api.regs.oweltonrosie.com/health](https://api.regs.oweltonrosie.com/health). You should see `{"status":"ok"}`.

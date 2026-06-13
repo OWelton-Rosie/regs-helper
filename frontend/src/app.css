@@ -105,3 +105,9 @@ input {
 	border: 1px solid #ccc;
 	border-radius: 8px;
 }
+
+.warming-up {
+	margin-top: 10px;
+	color: #666;
+	font-style: italic;
+}
