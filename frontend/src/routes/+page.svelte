@@ -15,7 +15,7 @@
 
 		const timeout = setTimeout(() => {
 			warmingUp = true;
-		}, 5000);
+		}, 8000);
 
 		try {
 
@@ -70,7 +70,7 @@
 
 	{#if warmingUp}
 		<p class="warming-up">
-			This is taking longer than usual. The server may be starting up.
+			This is taking longer than usual. The server may be starting up. Hang tight!
 		</p>
 	{/if}
 

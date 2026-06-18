@@ -1,54 +1,104 @@
-# `regs-helper`
+# regs-helper
 
-## Running the app locally
-This app runs on a Python backend and a SvelteKit frontend. Thus, the app needs two different processes to run it locally.
+A web application that answers questions about the WCA Regulations and Guidelines using semantic search and AI.
 
-Clone the project and navigate to it:
+Frontend:
+- SvelteKit
+- Cloudflare Pages
+
+Backend:
+- FastAPI
+- OpenAI API
+- SQLite
+
+Live site:
+[https://regs.oweltonrosie.com](https://regs.oweltonrosie.com)
+
+## Requirements
+
+Before running the app, you'll need:
+
+- Python 3.13+
+- Node.js
+- npm
+- [An OpenAI API key](https://platform.openai.com/signup/)
+
+## Quick Start
+
+Clone the repository:
+
 ```bash
-git clone https://github.com/OWelton-Rosie/regs-helper && cd regs-helper
+git clone https://github.com/OWelton-Rosie/regs-helper
+cd regs-helper
 ```
 
-### 1. Get the backend going:
+Create a virtual environment:
 
-Install the dependencies with pip:
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+Install backend dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
-Activate the virtual environment (if not already activated):
+Install frontend dependencies:
 
-```bash
-source venv/bin/activate
-```
-To verify that this works, check your console. The text `(venv)` should appear at the start of your shell, eg: `(venv) oscarwelton-rosie@Oscars-MacBook-Air regs-helper % `.
-
-Finally, run the backend:
-```bash
-uvicorn app:app --reload
-```
-
-### 2. Get the frontend firing:
-In a new terminal window (make sure you're cd'd to the `regs-helper` directory):
-
-Naviagate to the frontend directory:
 ```bash
 cd frontend
+npm install
+cd ..
 ```
 
-Run the dev server:
+Copy the example environment files:
+
 ```bash
-npm install && npm run dev
+cp .env.example .env
+cp frontend/.env.example frontend/.env
 ```
 
-To view the app, navigate to:
+Populate `.env` with your OpenAI API key and admin password.
+
+Start the application:
+
 ```bash
-http://localhost:5173/
+./run.sh
 ```
 
+## Environment Variables
 
-Running the app requires you to have an OpenAI API key and an admin password to access the logs. [.env.example](https://github.com/OWelton-Rosie/regs-helper/blob/main/.env.example) contains the required fields. Create a file named `.env` and populate the values with your own ones. `OPENAI_API_KEY` must be a valid OpenAI API key but `ADMIN_PASSWORD` can be anything. 
+Backend (`.env`)
 
-You can sign up to the OpenAI API [here](https://openai.com/api/).
+```env
+OPENAI_API_KEY=your-api-key
+ADMIN_PASSWORD=your-password
+```
+
+Frontend (`frontend/.env`)
+
+```env
+VITE_API_URL=http://127.0.0.1:8000
+```
+
+Copy the example files:
+
+```bash
+cp .env.example .env
+cp frontend/.env.example frontend/.env
+```
+
+## Project Structure
+
+```text
+├── ai/               Backend AI logic
+├── frontend/         SvelteKit frontend
+├── app.py            FastAPI application
+├── requirements.txt
+└── README.md
+```
 
 
 ## Updating the app after regulation changes:
@@ -62,3 +112,6 @@ python3 ai/parse_regs.py
 
 ## Status updates
 Check [https://api.regs.oweltonrosie.com/health](https://api.regs.oweltonrosie.com/health). You should see `{"status":"ok"}`.
+
+## Assorted notes
+- The production backend is hosted on Render's free tier. After periods of inactivity, the backend may take up to a minute to wake up and answer the first request.
