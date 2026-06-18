@@ -64,6 +64,19 @@ Populate `.env` with your OpenAI API key and admin password.
 
 Start the application:
 
+Backend:
+```bash
+uvicorn app:app --reload
+```
+
+Frontend:
+```bash
+cd frontend
+npm run dev
+```
+
+Alternately, you can use the build script:
+
 ```bash
 ./run.sh
 ```
