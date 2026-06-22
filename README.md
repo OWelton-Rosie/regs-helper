@@ -77,10 +77,15 @@ cd frontend
 npm run dev
 ```
 
-Alternately, if your machine supports Unix-like commands, you can use the [build script](https://github.com/OWelton-Rosie/regs-helper/blob/main/run.sh):
+Alternately, if your machine supports Unix-like commands, you can use the [dev script](https://github.com/OWelton-Rosie/regs-helper/blob/main/dev.sh):
 
 ```bash
-./run.sh
+./dev.sh
+```
+
+There's also a [build script](https://github.com/OWelton-Rosie/regs-helper/blob/main/build.sh) that simulates a production environment:
+```bash
+./build.sh
 ```
 
 ## Environment Variables
