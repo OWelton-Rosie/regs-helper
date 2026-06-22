@@ -53,14 +53,16 @@
 		Ask questions about the WCA Regulations and Guidelines.
 	</p>
 
-	<textarea
-		bind:value={question}
-		placeholder="Ask a WCA regulations question..."
-	></textarea>
 
-	<button onclick={ask}>
-		Ask
-	</button>
+		<textarea
+			bind:value={question}
+			placeholder="Ask a WCA regulations question..."
+		></textarea>
+
+		<button onclick={ask}>
+			Ask
+		</button>
+
 
 	{#if loading}
 

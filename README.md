@@ -1,6 +1,6 @@
-# regs-helper
+# `regs-helper`
 
-A web application that answers questions about the WCA Regulations and Guidelines using semantic search and AI.
+A web application that answers questions about the WCA Regulations using semantic search and AI.
 
 Frontend:
 - SvelteKit
@@ -13,6 +13,8 @@ Backend:
 
 Live site:
 [https://regs.oweltonrosie.com](https://regs.oweltonrosie.com)
+<br>
+Dev site: [http://localhost:5713](http://localhost:5173)
 
 ## Requirements
 
@@ -62,20 +64,20 @@ cp frontend/.env.example frontend/.env
 
 Populate `.env` with your OpenAI API key and admin password.
 
-Start the application:
+Start the app:
 
 Backend:
 ```bash
 uvicorn app:app --reload
 ```
 
-Frontend:
+Frontend (in a new terminal window):
 ```bash
 cd frontend
 npm run dev
 ```
 
-Alternately, you can use the build script:
+Alternately, if your machine supports Unix-like commands, you can use the [build script](https://github.com/OWelton-Rosie/regs-helper/blob/main/run.sh):
 
 ```bash
 ./run.sh
@@ -121,10 +123,25 @@ cp frontend/.env.example frontend/.env
 python3 ai/parse_regs.py
 ```
 3. Check `ai/data/chunks.json` and `ai/data/embeddings.json` and ask some questions to check that it worked
-4. Commit and push as normal
+4. Commit and push to GH as normal
+5. Let Render and CF pages do their thing
+
 
 ## Status updates
-Check [https://api.regs.oweltonrosie.com/health](https://api.regs.oweltonrosie.com/health). You should see `{"status":"ok"}`.
+Check [https://api.regs.oweltonrosie.com/health](https://api.regs.oweltonrosie.com/health). You should see `{"status":"ok"}`. The local equivalent is [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health).
 
 ## Assorted notes
 - The production backend is hosted on Render's free tier. After periods of inactivity, the backend may take up to a minute to wake up and answer the first request.
+- If you ever see the following when doing local testing:
+```bash
+[Errno 48] Address already in use
+```
+Run:
+```bash
+lsof -i :8000
+```
+
+If it's uvicorn:
+```bash
+pkill -f uvicorn
+```

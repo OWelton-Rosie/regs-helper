@@ -4,3 +4,19 @@
     <p><a href="admin">Admin login</a></p>
 </footer>
 
+<style>
+    footer {
+	margin-top: 4rem;
+
+	text-align: center;
+
+	color: #57606a;
+	font-size: 0.95rem;
+
+	padding-bottom: 2rem;
+}
+
+footer p {
+	margin: 0.5rem 0;
+}
+</style>
