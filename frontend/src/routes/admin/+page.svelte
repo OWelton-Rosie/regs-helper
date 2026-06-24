@@ -92,6 +92,7 @@
 			type="password"
 			bind:value={password}
 			placeholder="Password"
+			onkeydown={(e) => e.key === 'Enter' && login()}
 		/>
 
 		<button onclick={login}>

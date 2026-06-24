@@ -24,6 +24,7 @@ from ai.rate_limit import is_rate_limited
 load_dotenv()
 
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+BETA_PASSWORD = os.getenv("BETA_PASSWORD")
 
 app = FastAPI()
 
@@ -122,4 +123,22 @@ async def questions(
 
     return {
         "questions": get_recent_questions()
+    }
+
+
+# Beta passowrd
+@app.post("/beta-login")
+async def beta_login(
+    data: dict = Body(...)
+):
+    password = data.get("password")
+
+    if password != BETA_PASSWORD:
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect password"
+        )
+
+    return {
+        "success": True
     }

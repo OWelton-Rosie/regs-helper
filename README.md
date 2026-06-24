@@ -88,6 +88,11 @@ There's also a [build script](https://github.com/OWelton-Rosie/regs-helper/blob/
 ./build.sh
 ```
 
+Both will need to be made executable with the following:
+```bash
+chmod +x [script name]
+```
+
 ## Environment Variables
 
 Backend (`.env`)
@@ -150,3 +155,5 @@ If it's uvicorn:
 ```bash
 pkill -f uvicorn
 ```
+
+- I might add authentication through WCA OAuth at some point. No promises, though.
