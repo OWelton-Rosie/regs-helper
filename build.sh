@@ -6,4 +6,4 @@ uvicorn app:app --reload &
 echo "Starting frontend..."
 cd frontend
 npm run build
-npm run preview
+npm run preview -- --open

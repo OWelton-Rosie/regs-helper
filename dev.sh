@@ -5,4 +5,4 @@ uvicorn app:app --reload &
 
 echo "Starting frontend..."
 cd frontend
-npm run dev
+npm run dev -- --open
