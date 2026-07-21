@@ -1,13 +1,11 @@
 version: 2
 
 updates:
-  # Frontend dependencies
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
       interval: "weekly"
 
-  # Backend dependencies
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
