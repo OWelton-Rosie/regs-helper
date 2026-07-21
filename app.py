@@ -124,21 +124,3 @@ async def questions(
     return {
         "questions": get_recent_questions()
     }
-
-
-# Beta passowrd
-@app.post("/beta-login")
-async def beta_login(
-    data: dict = Body(...)
-):
-    password = data.get("password")
-
-    if password != BETA_PASSWORD:
-        raise HTTPException(
-            status_code=401,
-            detail="Incorrect password"
-        )
-
-    return {
-        "success": True
-    }
