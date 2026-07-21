@@ -1,4 +1,5 @@
 # `regs-helper`
+![Tests](https://github.com/OWelton-Rosie/regs-helper/actions/workflows/test.yml/badge.svg)
 
 A web application that answers questions about the WCA Regulations using semantic search and AI.
 
