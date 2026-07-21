@@ -27,10 +27,10 @@
     <li>Miscellaneous activities that violate the terms of service or intentionally impact the service's performance.</li>
 </ul>
 
-<p>Abusive, automated, or excessive use of the service may result in access being restricted or blocked without notice. The app automatically limits the number of requests per IP address to 30 per hour.</p>
+<p>Abusive, automated, or excessive use of the service may result in access being restricted or blocked without notice. The app automatically limits the number of requests per IP address to 30 per hour. If you need more, <a href="mailto:oweltonrosie@gmail.com" target="_blank" rel="noopener noreferrer">contact me</a>.</p>
+
 
 <h2>Privacy</h2>
-
 <p>Questions submitted to the app (along with IP address, timestamp, and AI-generated responses) are logged for debugging, service improvement, and abuse prevention purposes. Users should not submit personal, confidential, or sensitive information.</p>
 
 <p>This app is hosted on Render on Cloudflare. Their privacy policies can be found <a href="https://render.com/privacy" target="_blank" rel="noopener noreferrer">here</a> and <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">here</a>.</p>

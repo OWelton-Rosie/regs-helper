@@ -99,15 +99,8 @@
 				<details>
 
 					<summary>
-	<a
-		href={`https://www.worldcubeassociation.org/regulations/#${source.id}`}
-		target="_blank"
-		rel="noopener noreferrer"
-		onclick={(e) => e.stopPropagation()}
-	>
-		{source.id}
-	</a>
-</summary>
+						<a href={`https://www.worldcubeassociation.org/regulations/#${source.id}`} target="_blank" rel="noopener noreferrer" onclick={(e) => e.stopPropagation()}>{source.id}</a>
+					</summary>
 
 					<p>
 						{source.text}
