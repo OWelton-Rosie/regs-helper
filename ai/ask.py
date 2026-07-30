@@ -41,7 +41,7 @@ def ask(question):
 )
 
     response = client.chat.completions.create(
-        model="gpt-4o-mini", # using this model as it's cheap and seems to work well
+        model="gpt-5.6-terra", # upgrate from gpt 4.0-mini
         messages=[
             {
                 "role": "system",
