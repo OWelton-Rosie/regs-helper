@@ -16,7 +16,7 @@ Rules:
 - Do not use outside knowledge.
 - Always cite regulation IDs.
 - If the answer is not supported by the supplied regulations, say:
-  "I could not find a clear regulation covering this."
+  "I could not find a clear regulation covering this. Please consult the <a href="https://www.worldcubeassociation.org/regulations/" target="_blank" rel="noopener noreferrer"> or your <a href="https://www.worldcubeassociation.org/delegates" target="_blank" rel="noopener noreferrer">WCA Delegate</a> for more information."
 
 Output format:
 
