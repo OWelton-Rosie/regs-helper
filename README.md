@@ -130,8 +130,9 @@ cp frontend/.env.example frontend/.env
 ## Updating the app after regulation changes:
 1. Copy and paste the latest relased version of the regs into `ai/data/regulations.txt`
 2. Run:
-```
-python3 ai/parse_regs.py
+```bash
+python3 ai/parse_regs.py &&
+python3 ai/embed.py
 ```
 3. Check `ai/data/chunks.json` and `ai/data/embeddings.json` and ask some questions to check that it worked
 4. Commit and push to GH as normal
