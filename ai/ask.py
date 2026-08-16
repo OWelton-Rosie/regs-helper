@@ -7,7 +7,8 @@ load_dotenv()
 
 client = OpenAI()
 
-# prompt for ai agent
+REGULATIONS_VERSION = "April 1, 2026"  # Update this to the current regulations version when it changes
+
 SYSTEM_PROMPT = """
 You are an assistant for the World Cube Association Regulations.
 
@@ -15,8 +16,10 @@ Rules:
 - Use ONLY the supplied regulations.
 - Do not use outside knowledge.
 - Always cite regulation IDs.
-- If the answer is not supported by the supplied regulations, say:
-  "I could not find a clear regulation covering this. Please consult the <a href="https://www.worldcubeassociation.org/regulations/" target="_blank" rel="noopener noreferrer"> or your <a href="https://www.worldcubeassociation.org/delegates" target="_blank" rel="noopener noreferrer">WCA Delegate</a> for more information."
+- Do not invent regulations, rules, penalties, or procedures.
+- Do not use Markdown formatting.
+- If the supplied regulations do not clearly support an answer, say:
+  "I could not find a clear regulation covering this. Please consult the <a href="https://www.worldcubeassociation.org/regulations/" target="_blank" rel="noopener noreferrer">WCA Regulations</a> or your <a href="https://www.worldcubeassociation.org/delegates" target="_blank" rel="noopener noreferrer">WCA Delegate</a> for more information."
 
 Output format:
 
@@ -35,13 +38,28 @@ def ask(question):
 
     results = search(question)
 
+    if not results:
+
+        return {
+            "answer": (
+                'I could not find a clear regulation covering this. '
+                'Please consult the <a href="https://www.worldcubeassociation.org/regulations/" '
+                'target="_blank" rel="noopener noreferrer">WCA Regulations</a> '
+                'or your <a href="https://www.worldcubeassociation.org/delegates" '
+                'target="_blank" rel="noopener noreferrer">WCA Delegate</a> '
+                'for more information.'
+            ),
+            "sources": [],
+            "regulations_version": REGULATIONS_VERSION
+        }
+
     context = "\n\n".join(
-    f"{r['id']}: {r['text']}"
-    for r in results
-)
+        f"{r['id']}: {r['text']}"
+        for r in results
+    )
 
     response = client.chat.completions.create(
-        model="gpt-5.6-terra", # upgrate from gpt 4.0-mini
+        model="gpt-5.6-terra",
         messages=[
             {
                 "role": "system",
@@ -64,5 +82,6 @@ Relevant Regulations:
 
     return {
         "answer": answer,
-        "sources": results
+        "sources": results,
+        "regulations_version": REGULATIONS_VERSION
     }

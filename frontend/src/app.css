@@ -33,6 +33,11 @@ h1 {
 	margin-bottom: 2rem;
 }
 
+
+/* -------------------------
+   Inputs
+   ------------------------- */
+
 textarea,
 input {
 	width: 100%;
@@ -46,6 +51,7 @@ input {
 	border-radius: 12px;
 
 	background: white;
+	color: #24292f;
 
 	box-sizing: border-box;
 
@@ -69,6 +75,16 @@ input:focus {
 		0 0 0 3px rgba(9, 105, 218, 0.15);
 }
 
+textarea::placeholder,
+input::placeholder {
+	color: #57606a;
+}
+
+
+/* -------------------------
+   Buttons
+   ------------------------- */
+
 button {
 	margin-top: 1rem;
 
@@ -87,7 +103,8 @@ button {
 
 	transition:
 		transform 0.15s,
-		background 0.15s;
+		background 0.15s,
+		opacity 0.15s;
 }
 
 button:hover {
@@ -99,11 +116,114 @@ button:active {
 	transform: translateY(0);
 }
 
+button:disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+	transform: none;
+}
+
+
+/* -------------------------
+   Question input
+   ------------------------- */
+
+.question-input {
+	position: relative;
+}
+
+.question-input textarea {
+	padding-right: 4rem;
+}
+
+
+/* -------------------------
+   Voice input
+   ------------------------- */
+
+.voice-button {
+	position: absolute;
+
+	right: 0.75rem;
+	bottom: 0.75rem;
+
+	width: 42px;
+	height: 42px;
+
+	margin: 0;
+	padding: 0;
+
+	border-radius: 10px;
+
+	background: transparent;
+	color: #57606a;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	transform: none;
+}
+
+.voice-button:hover {
+	background: #f0f2f4;
+	color: #24292f;
+
+	transform: none;
+}
+
+.voice-button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.voice-button.recording {
+	background: #d1242f;
+	color: white;
+}
+
+.voice-button.recording:hover {
+	background: #b91c27;
+}
+
+.voice-status {
+	margin-top: 0.75rem;
+
+	color: #0969da;
+
+	font-weight: 600;
+}
+
+.voice-error {
+	margin-top: 0.75rem;
+
+	color: #cf222e;
+}
+
+
+/* -------------------------
+   Ask button
+   ------------------------- */
+
+.ask-button {
+	display: block;
+}
+
+
+/* -------------------------
+   Loading
+   ------------------------- */
+
 .loading,
 .warming-up {
 	margin-top: 1rem;
+
 	color: #57606a;
 }
+
+
+/* -------------------------
+   Answer
+   ------------------------- */
 
 .answer,
 details {
@@ -122,9 +242,17 @@ details {
 	margin-top: 2rem;
 }
 
-.answer h2,
-.sources h2 {
-	margin-top: 0;
+.answer-header {
+	display: flex;
+
+	align-items: center;
+	justify-content: space-between;
+
+	gap: 1rem;
+}
+
+.answer-header h2 {
+	margin: 0;
 }
 
 .answer p,
@@ -133,8 +261,70 @@ details p {
 	line-height: 1.7;
 }
 
+
+/* -------------------------
+   Copy button
+   ------------------------- */
+
+.copy-button {
+	display: inline-flex;
+
+	align-items: center;
+	justify-content: center;
+
+	gap: 0.4rem;
+
+	margin: 0;
+	padding: 0.5rem 0.8rem;
+
+	border-radius: 8px;
+
+	font-size: 0.9rem;
+
+	background: #f6f8fa;
+	color: #24292f;
+
+	border: 1px solid #d0d7de;
+
+	transform: none;
+}
+
+.copy-button:hover {
+	background: #f0f2f4;
+	color: #24292f;
+
+	transform: none;
+}
+
+
+/* -------------------------
+   Regulation version
+   ------------------------- */
+
+.regulations-version {
+	margin-top: 1.25rem;
+	padding-top: 1rem;
+
+	border-top: 1px solid #d8dee4;
+
+	font-size: 0.9rem;
+	line-height: 1.5;
+	color: #57606a;
+
+	text-align: left;
+}
+
+/* -------------------------
+   Sources
+   ------------------------- */
+
 .sources {
 	margin-top: 2rem;
+}
+
+.answer h2,
+.sources h2 {
+	margin-top: 0;
 }
 
 details {
@@ -143,6 +333,7 @@ details {
 
 summary {
 	cursor: pointer;
+
 	font-weight: 600;
 	font-size: 1rem;
 }
@@ -151,9 +342,107 @@ details p {
 	margin-top: 1rem;
 }
 
+summary a,
+summary a:visited {
+	color: inherit;
+
+	text-decoration: none;
+
+	font-weight: 600;
+}
+
+summary a:hover {
+	text-decoration: underline;
+}
+
+
+/* -------------------------
+   Report
+   ------------------------- */
+
+.report-button {
+	display: inline-flex;
+
+	align-items: center;
+	justify-content: center;
+
+	gap: 0.4rem;
+
+	margin-top: 1rem;
+	padding: 0.5rem 0.8rem;
+
+	background: transparent;
+	color: #57606a;
+
+	border: 1px solid #d0d7de;
+	border-radius: 8px;
+
+	font-size: 0.9rem;
+
+	transform: none;
+}
+
+.report-button:hover {
+	background: #f6f8fa;
+	color: #24292f;
+
+	transform: none;
+}
+
+.report-form {
+	margin-top: 1rem;
+	padding-top: 1rem;
+
+	border-top: 1px solid #d8dee4;
+}
+
+.report-form label {
+	display: block;
+
+	margin-bottom: 0.5rem;
+
+	font-weight: 600;
+	font-size: 0.95rem;
+}
+
+.report-form textarea {
+	min-height: 100px;
+}
+
+.report-submit {
+	margin-top: 0.75rem;
+}
+
+.report-submit:disabled {
+	opacity: 0.5;
+
+	cursor: not-allowed;
+	transform: none;
+}
+
+.report-error {
+	margin-top: 0.75rem;
+
+	color: #cf222e;
+}
+
+.report-success {
+	margin-top: 1rem;
+
+	color: #1a7f37;
+
+	font-weight: 500;
+}
+
+
+/* -------------------------
+   Links
+   ------------------------- */
+
 a,
 a:visited {
 	color: #0969da;
+
 	text-decoration: none;
 }
 
@@ -162,7 +451,12 @@ a:hover {
 }
 
 
+/* -------------------------
+   Mobile
+   ------------------------- */
+
 @media (max-width: 700px) {
+
 	body {
 		padding: 1rem;
 	}
@@ -171,10 +465,24 @@ a:hover {
 		font-size: 2rem;
 	}
 
-	button {
+	.ask-button {
 		width: 100%;
 	}
+
+	.answer-header {
+		align-items: flex-start;
+	}
+
+	.copy-button {
+		flex-shrink: 0;
+	}
+
 }
+
+
+/* -------------------------
+   Dark mode
+   ------------------------- */
 
 @media (prefers-color-scheme: dark) {
 
@@ -193,6 +501,7 @@ a:hover {
 	input {
 		background: #161b22;
 		color: #e6edf3;
+
 		border-color: #30363d;
 	}
 
@@ -201,10 +510,20 @@ a:hover {
 		color: #8b949e;
 	}
 
+	textarea:focus,
+	input:focus {
+		border-color: #58a6ff;
+
+		box-shadow:
+			0 0 0 3px rgba(88, 166, 255, 0.15);
+	}
+
 	.answer,
 	details {
 		background: #161b22;
+
 		border-color: #30363d;
+
 		box-shadow: none;
 	}
 
@@ -225,22 +544,68 @@ a:hover {
 		background: #388bfd;
 	}
 
-	textarea:focus,
-	input:focus {
-		border-color: #58a6ff;
-
-		box-shadow:
-			0 0 0 3px rgba(88, 166, 255, 0.15);
+	.voice-button {
+		background: transparent;
+		color: #8b949e;
 	}
-}
 
-summary a,
-summary a:visited {
-	color: inherit;
-	text-decoration: none;
-	font-weight: 600;
-}
+	.voice-button:hover {
+		background: #21262d;
+		color: #e6edf3;
+	}
 
-summary a:hover {
-	text-decoration: underline;
+	.voice-button.recording {
+		background: #da3633;
+		color: white;
+	}
+
+	.voice-button.recording:hover {
+		background: #b91c27;
+	}
+
+	.voice-error {
+		color: #ff7b72;
+	}
+
+	.copy-button {
+		background: #21262d;
+		color: #e6edf3;
+
+		border-color: #30363d;
+	}
+
+	.copy-button:hover {
+		background: #30363d;
+		color: #e6edf3;
+	}
+
+	.regulations-version {
+		border-color: #30363d;
+		color: #8b949e;
+	}
+
+	.report-button {
+		background: transparent;
+		color: #8b949e;
+
+		border-color: #30363d;
+	}
+
+	.report-button:hover {
+		background: #21262d;
+		color: #e6edf3;
+	}
+
+	.report-form {
+		border-color: #30363d;
+	}
+
+	.report-error {
+		color: #ff7b72;
+	}
+
+	.report-success {
+		color: #3fb950;
+	}
+
 }

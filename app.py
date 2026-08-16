@@ -1,4 +1,5 @@
 import os
+import json
 
 from dotenv import load_dotenv
 
@@ -16,19 +17,25 @@ from ai.ask import ask
 from ai.database import (
     initialize_database,
     log_question,
-    get_recent_questions
+    get_recent_questions,
+    log_report,
+    get_recent_reports
 )
 
 from ai.rate_limit import is_rate_limited
 
+
 load_dotenv()
 
+
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
-BETA_PASSWORD = os.getenv("BETA_PASSWORD")
+
 
 app = FastAPI()
 
+
 initialize_database()
+
 
 # -------------------------
 # CORS
@@ -45,6 +52,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # -------------------------
 # Main API
@@ -81,6 +89,39 @@ async def health():
 
     return {
         "status": "ok"
+    }
+
+
+# -------------------------
+# Reports
+# -------------------------
+
+@app.post("/report")
+async def report(
+    data: dict = Body(...)
+):
+
+    question = data.get("question")
+    answer = data.get("answer")
+    sources = data.get("sources")
+    comment = data.get("comment")
+
+    if not question or not answer or not comment:
+
+        raise HTTPException(
+            status_code=400,
+            detail="Missing required fields"
+        )
+
+    log_report(
+        question,
+        answer,
+        json.dumps(sources or []),
+        comment
+    )
+
+    return {
+        "success": True
     }
 
 
@@ -123,4 +164,23 @@ async def questions(
 
     return {
         "questions": get_recent_questions()
+    }
+
+
+@app.post("/reports")
+async def reports(
+    data: dict = Body(...)
+):
+
+    password = data.get("password")
+
+    if password != ADMIN_PASSWORD:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect password"
+        )
+
+    return {
+        "reports": get_recent_reports()
     }

@@ -23,6 +23,17 @@ def initialize_database():
         )
     """)
 
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS reports (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            question TEXT NOT NULL,
+            answer TEXT NOT NULL,
+            sources TEXT NOT NULL,
+            comment TEXT NOT NULL
+        )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -70,6 +81,64 @@ def get_recent_questions(limit=50):
             question,
             answer
         FROM questions
+        ORDER BY id DESC
+        LIMIT ?
+        """,
+        (limit,)
+    ).fetchall()
+
+    conn.close()
+
+    return rows
+
+
+def log_report(
+    question: str,
+    answer: str,
+    sources: str,
+    comment: str
+):
+
+    conn = get_connection()
+
+    conn.execute(
+        """
+        INSERT INTO reports
+        (
+            timestamp,
+            question,
+            answer,
+            sources,
+            comment
+        )
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            datetime.now().isoformat(),
+            question,
+            answer,
+            sources,
+            comment
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
+
+def get_recent_reports(limit=50):
+
+    conn = get_connection()
+
+    rows = conn.execute(
+        """
+        SELECT
+            timestamp,
+            question,
+            answer,
+            sources,
+            comment
+        FROM reports
         ORDER BY id DESC
         LIMIT ?
         """,
