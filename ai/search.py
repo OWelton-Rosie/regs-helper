@@ -3,13 +3,28 @@ from dotenv import load_dotenv
 import json
 import numpy as np
 
-load_dotenv()
-client = OpenAI()
-
 from pathlib import Path
 
 
+# -------------------------
+# Paths
+# -------------------------
+
 DATA_DIR = Path(__file__).parent / "data"
+
+
+# -------------------------
+# OpenAI
+# -------------------------
+
+load_dotenv()
+
+client = OpenAI()
+
+
+# -------------------------
+# Load embeddings
+# -------------------------
 
 with open(
     DATA_DIR / "embeddings.json",
@@ -19,7 +34,12 @@ with open(
     chunks = json.load(f)
 
 
+# -------------------------
+# Similarity
+# -------------------------
+
 def cosine_similarity(a, b):
+
     a = np.array(a)
     b = np.array(b)
 
@@ -27,6 +47,10 @@ def cosine_similarity(a, b):
         np.linalg.norm(a) * np.linalg.norm(b)
     )
 
+
+# -------------------------
+# Search
+# -------------------------
 
 def search(query, top_k=5):
 
@@ -50,7 +74,9 @@ def search(query, top_k=5):
             chunk["embedding"]
         )
 
-        # Keyword boosts to improve relevance for certain terms - this is a bit of a bitch but seems to work
+        # Keyword boosts to improve relevance for certain terms.
+        # This is a bit of a bitch but seems to work.
+
         if "+2" in query_lower and "+2" in text_lower:
             score += 1.0
 
@@ -74,6 +100,10 @@ def search(query, top_k=5):
 
         scored.append({
             "id": chunk["id"],
+            "regulation": chunk.get(
+                "regulation",
+                chunk["id"]
+            ),
             "text": chunk["text"],
             "score": score
         })
@@ -85,12 +115,16 @@ def search(query, top_k=5):
 
     return [
         {
-            "id": r["id"],
+            "id": r["regulation"],
             "text": r["text"]
         }
         for r in scored[:top_k]
     ]
 
+
+# -------------------------
+# Command-line testing
+# -------------------------
 
 if __name__ == "__main__":
 
