@@ -16,6 +16,15 @@ body {
 	line-height: 1.6;
 }
 
+html {
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+}
+
+html::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+
 .container {
 	max-width: 900px;
 	margin: 0 auto;
