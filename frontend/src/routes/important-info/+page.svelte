@@ -27,7 +27,7 @@
     <li>Miscellaneous activities that violate the terms of service or intentionally impact the service's performance.</li>
 </ul>
 
-<p>Abusive, automated, or excessive use of the service may result in access being restricted or blocked without notice. The app automatically limits the number of requests per IP address to 30 per hour. If you need more, <a href="mailto:oweltonrosie@gmail.com" target="_blank" rel="noopener noreferrer">contact me</a>.</p>
+<p>Abusive, automated, or excessive use of the service may result in access being restricted or blocked without notice. The app automatically limits the number of requests per IP address to 30 per hour. If you need more, <a href="https://oweltonrosie.com/contact" target="_blank" rel="noopener noreferrer">contact me</a> and we can sort something out.</p>
 
 
 <h2>Privacy</h2>
