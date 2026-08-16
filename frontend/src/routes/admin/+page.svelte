@@ -83,7 +83,7 @@
 	<h1>Hi Oscar!</h1>
 
 	<p>
-		Enter your password to view the logs.
+		Enter the password to view the logs.
 	</p>
 
 	{#if !loggedIn}
