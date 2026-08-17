@@ -7,7 +7,13 @@ load_dotenv()
 
 client = OpenAI()
 
-REGULATIONS_VERSION = "April 1, 2026"  # Update this to the current regulations version when it changes
+
+# Update these when the regs change!
+REGULATIONS_VERSION = "April 1, 2026"
+REGULATIONS_RELEASE_URL = (
+    "https://github.com/thewca/wca-regulations/releases/tag/official-2026-04-01"
+)
+
 
 SYSTEM_PROMPT = """
 You are an assistant for the World Cube Association Regulations.
@@ -23,14 +29,13 @@ Rules:
 
 Output format:
 
-Answer:
-<answer>
+Give the answer directly.
 
 Relevant Regulations:
 - IDs
 
 Explanation:
-<brief explanation>
+Brief explanation
 """
 
 
@@ -39,7 +44,6 @@ def ask(question):
     results = search(question)
 
     if not results:
-
         return {
             "answer": (
                 'I could not find a clear regulation covering this. '
@@ -50,7 +54,8 @@ def ask(question):
                 'for more information.'
             ),
             "sources": [],
-            "regulations_version": REGULATIONS_VERSION
+            "regulations_version": REGULATIONS_VERSION,
+            "regulations_release_url": REGULATIONS_RELEASE_URL
         }
 
     context = "\n\n".join(
@@ -83,5 +88,6 @@ Relevant Regulations:
     return {
         "answer": answer,
         "sources": results,
-        "regulations_version": REGULATIONS_VERSION
+        "regulations_version": REGULATIONS_VERSION,
+        "regulations_release_url": REGULATIONS_RELEASE_URL
     }
