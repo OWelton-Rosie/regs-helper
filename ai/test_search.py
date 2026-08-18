@@ -42,6 +42,11 @@ TEST_CASES = [
         "name": "Judge resets timer",
         "question": "Does the judge reset the timer or the competitor?",
         "expected": ["B2a", "A3b"],
+    },
+    {
+        "name": "Missing centre cap legality",
+        "question": "Can I use a 3x3x3 with a missing centre cap?",
+        "expected": ["3j"],
     }
 ]
 

@@ -139,28 +139,15 @@ def detect_format(query):
 
 
 # -------------------------
-# Search
+# Intent detection
 # -------------------------
 
-def search(query, top_k=5):
-
-    response = client.embeddings.create(
-        model="text-embedding-3-small",
-        input=query
-    )
-
-    q_emb = response.data[0].embedding
-
-    scored = []
+def detect_intents(query):
 
     query_lower = query.lower()
 
-    target_article = detect_article(query)
-    target_format = detect_format(query)
-
-
     # -------------------------
-    # Intent detection
+    # Changing submitted number
     # -------------------------
 
     asks_change = (
@@ -181,6 +168,10 @@ def search(query, top_k=5):
         )
     )
 
+    # -------------------------
+    # Number of puzzles
+    # -------------------------
+
     asks_number = (
         not asks_change
         and any(term in query_lower for term in (
@@ -195,27 +186,134 @@ def search(query, top_k=5):
         ))
     )
 
-    asks_disqualification = any(term in query_lower for term in (
-        "disqualified",
-        "disqualification",
-        "dnf",
-        "penalty"
-    ))
+    # -------------------------
+    # Disqualification
+    # -------------------------
 
-    asks_equipment_problem = any(term in query_lower for term in (
-        "falls off",
-        "fell off",
-        "fall off",
-        "center cap",
-        "centre cap",
-        "cap falls",
-        "cap fell",
-        "damaged",
-        "broken",
-        "breaks",
-        "piece falls",
-        "piece fell"
-    ))
+    asks_disqualification = any(
+        term in query_lower
+        for term in (
+            "disqualified",
+            "disqualification",
+            "dnf",
+            "penalty"
+        )
+    )
+
+    # -------------------------
+    # Equipment incident
+    #
+    # This is for something happening to a
+    # puzzle during an attempt.
+    # -------------------------
+
+    asks_equipment_problem = any(
+        term in query_lower
+        for term in (
+            "falls off",
+            "fell off",
+            "fall off",
+            "cap falls",
+            "cap fell",
+            "piece falls",
+            "piece fell",
+            "breaks",
+            "broke",
+            "break off",
+            "comes off",
+            "came off"
+        )
+    )
+
+    # -------------------------
+    # Puzzle legality / condition
+    #
+    # This is deliberately separate from an
+    # equipment incident. Questions such as
+    # "Can I use a cube with a missing cap?"
+    # concern Article 3 puzzle requirements.
+    # -------------------------
+
+    asks_legality = any(
+        term in query_lower
+        for term in (
+            "legal",
+            "allowed",
+            "permitted",
+            "can i use",
+            "can i compete with",
+            "allowed to use",
+            "permitted to use",
+            "okay to use",
+            "ok to use"
+        )
+    )
+
+    asks_damage_or_condition = any(
+        term in query_lower
+        for term in (
+            "missing",
+            "damaged",
+            "damage",
+            "broken",
+            "cracked",
+            "loose",
+            "worn",
+            "wear",
+            "centre cap",
+            "center cap",
+            "cap missing",
+            "piece missing",
+            "piece damaged",
+            "sticker missing",
+            "sticker damaged",
+            "marking",
+            "markings"
+        )
+    )
+
+    asks_equipment_legality = (
+        asks_legality
+        and asks_damage_or_condition
+    )
+
+    return {
+        "asks_change": asks_change,
+        "asks_number": asks_number,
+        "asks_disqualification": asks_disqualification,
+        "asks_equipment_problem": asks_equipment_problem,
+        "asks_legality": asks_legality,
+        "asks_damage_or_condition": asks_damage_or_condition,
+        "asks_equipment_legality": asks_equipment_legality
+    }
+
+
+# -------------------------
+# Search
+# -------------------------
+
+def search(query, top_k=5):
+
+    response = client.embeddings.create(
+        model="text-embedding-3-small",
+        input=query
+    )
+
+    q_emb = response.data[0].embedding
+
+    scored = []
+
+    query_lower = query.lower()
+
+    target_article = detect_article(query)
+    target_format = detect_format(query)
+    intents = detect_intents(query)
+
+    asks_change = intents["asks_change"]
+    asks_number = intents["asks_number"]
+    asks_disqualification = intents["asks_disqualification"]
+    asks_equipment_problem = intents["asks_equipment_problem"]
+    asks_equipment_legality = intents["asks_equipment_legality"]
 
 
     # -------------------------
@@ -292,23 +390,24 @@ def search(query, top_k=5):
 
         elif target_format == "multi_blind":
 
-            # H1 is the parent regulation establishing that
-            # Multi-Blind follows blindfolded procedures.
+            # H1 establishes that Multi-Blind
+            # follows blindfolded procedures.
 
             if regulation_id == "h1":
 
                 score += 1.0
 
 
-            # H regulations are substantially more relevant than
-            # regulations from other articles for Multi-Blind queries.
+            # H regulations are substantially more
+            # relevant to Multi-Blind questions.
 
             if article == "H":
 
                 score += 1.0
 
 
-            # Prefer text explicitly discussing Multi-Blind.
+            # Prefer text explicitly discussing
+            # Multi-Blind.
 
             if "multi-blind" in text_lower:
 
@@ -325,23 +424,23 @@ def search(query, top_k=5):
 
             if asks_number:
 
-                # H1a contains the actual minimum requirement.
+                # H1a contains the actual minimum.
 
                 if regulation_id == "h1a":
 
                     score += 6.0
 
 
-                # H1a1 is about changing the submitted number,
-                # not the minimum itself.
+                # H1a1 concerns changing the
+                # submitted number, not the minimum.
 
                 if regulation_id == "h1a1":
 
                     score += 2.0
 
 
-                # Penalise unrelated regulations that merely mention
-                # a number of puzzles/cubes.
+                # Penalise unrelated regulations
+                # which merely mention numbers.
 
                 if regulation_id not in {
                     "h1a",
@@ -375,7 +474,8 @@ def search(query, top_k=5):
                     score += 2.0
 
 
-                # H1a1 is specifically the rule being asked about.
+                # H1a1 is specifically the
+                # rule being asked about.
 
                 if regulation_id not in {
                     "h1",
@@ -388,13 +488,14 @@ def search(query, top_k=5):
 
 
             # -------------------------
-            # Equipment problems / caps
+            # Equipment incidents
             # -------------------------
 
             if asks_equipment_problem:
 
-                # H1e is the relevant Multi-Blind disqualification
-                # provision for individual-puzzle issues.
+                # H1e is the relevant Multi-Blind
+                # provision for individual-puzzle
+                # issues during an attempt.
 
                 if regulation_id == "h1e":
 
@@ -405,8 +506,9 @@ def search(query, top_k=5):
                     score += 1.0
 
 
-                # Other blindfolded regulations should not dominate
-                # simply because the question mentions blindfolding.
+                # Other blindfolded regulations should
+                # not dominate merely because the
+                # question mentions blindfolding.
 
                 if article == "B":
 
@@ -433,6 +535,63 @@ def search(query, top_k=5):
 
 
         # -------------------------
+        # Puzzle legality / condition
+        # -------------------------
+
+        if asks_equipment_legality:
+
+            # Article 3 contains the general requirements
+            # for puzzle condition and permitted equipment.
+
+            if article == "3":
+
+                score += 1.25
+
+
+            # Regulation 3j is specifically about puzzle
+            # condition, damage, markings, elevated pieces,
+            # and differences between pieces.
+
+            if regulation_id == "3j":
+
+                score += 4.0
+
+
+            # Regulation 3j1 deals specifically with
+            # reasonable wear and Delegate discretion.
+
+            if regulation_id == "3j1":
+
+                score += 3.0
+
+
+            # 3j1a provides the definition/example of
+            # reasonable wear.
+
+            if regulation_id == "3j1a":
+
+                score += 2.0
+
+
+            # Penalise regulations that merely mention
+            # a centre cap or detached piece but are not
+            # about general puzzle legality.
+
+            if regulation_id not in {
+                "3j",
+                "3j1",
+                "3j1a"
+            }:
+
+                if (
+                    "centre cap" in text_lower
+                    or "center cap" in text_lower
+                ):
+
+                    score -= 1.0
+
+
+        # -------------------------
         # General keyword boosts
         # -------------------------
 
@@ -440,30 +599,40 @@ def search(query, top_k=5):
 
             score += 1.0
 
+
         if "dnf" in query_lower and "dnf" in text_lower:
 
             score += 1.0
+
 
         if "penalty" in query_lower and "penalty" in text_lower:
 
             score += 0.5
 
+
         if "inspection" in query_lower and "inspection" in text_lower:
 
             score += 0.5
+
 
         if "timer" in query_lower and "timer" in text_lower:
 
             score += 0.5
 
+
         if "stopwatch" in query_lower and "stopwatch" in text_lower:
 
             score += 0.5
+
 
         if "delegate" in query_lower and "delegate" in text_lower:
 
             score += 0.5
 
+
+        # -------------------------
+        # Save result
+        # -------------------------
 
         scored.append({
             "id": chunk["id"],
