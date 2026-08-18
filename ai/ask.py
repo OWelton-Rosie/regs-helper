@@ -8,82 +8,126 @@ load_dotenv()
 client = OpenAI()
 
 
-# Update these when the regs change!
+# -------------------------
+# Regulations version
+# -------------------------
+
 REGULATIONS_VERSION = "April 1, 2026"
+
 REGULATIONS_RELEASE_URL = (
     "https://github.com/thewca/wca-regulations/releases/tag/official-2026-04-01"
 )
 
 
+# -------------------------
+# Fallback
+# -------------------------
+
+FALLBACK_ANSWER = (
+    "I could not find a clear regulation covering this. "
+    "Please consult the WCA Regulations or your WCA Delegate "
+    "for more information."
+)
+
+
+# -------------------------
+# System prompt
+# -------------------------
+
 SYSTEM_PROMPT = """
 You are an assistant for the World Cube Association Regulations.
 
+Your job is to answer questions using ONLY the supplied regulations.
+
 Rules:
+
 - Use ONLY the supplied regulations.
 - Do not use outside knowledge.
-- Always cite regulation IDs.
-- Do not invent regulations, rules, penalties, or procedures.
+- Do not invent regulations, rules, penalties, procedures, definitions, or exceptions.
+- Every factual claim about the WCA Regulations must be supported by one or more supplied regulation IDs.
+- Only cite a regulation ID when the supplied text actually supports the claim.
+- Do not assume that a regulation applies merely because it contains similar words.
+- Pay close attention to the event, round format, and situation described in the question.
+- Prefer a regulation specifically concerning the subject of the question over a generally related regulation.
+- If the supplied regulations do not clearly answer the question, say that you could not find a clear regulation covering it.
+- Do not infer a rule from the absence of a regulation.
 - Do not use Markdown formatting.
-- If the supplied regulations do not clearly support an answer, say:
-  "I could not find a clear regulation covering this. Please consult the <a href="https://www.worldcubeassociation.org/regulations/" target="_blank" rel="noopener noreferrer">WCA Regulations</a> or your <a href="https://www.worldcubeassociation.org/delegates" target="_blank" rel="noopener noreferrer">WCA Delegate</a> for more information."
+- Do not output HTML.
+- Do not include URLs.
+- Keep the answer concise and directly answer the question.
 
 Output format:
 
+Answer:
 Give the answer directly.
 
 Relevant Regulations:
-- IDs
+- List only the regulation IDs that directly support the answer.
 
 Explanation:
-Brief explanation
+Briefly explain how the supplied regulations support the answer.
+
+If the supplied regulations do not clearly support an answer, use:
+
+Answer:
+I could not find a clear regulation covering this.
+
+Relevant Regulations:
+- List the most relevant regulations only if they help explain why the supplied regulations are insufficient.
+
+Explanation:
+Briefly explain why the supplied regulations do not clearly answer the question.
 """
 
+
+# -------------------------
+# Ask
+# -------------------------
 
 def ask(question):
 
     results = search(question)
 
     if not results:
+
         return {
-            "answer": (
-                'I could not find a clear regulation covering this. '
-                'Please consult the <a href="https://www.worldcubeassociation.org/regulations/" '
-                'target="_blank" rel="noopener noreferrer">WCA Regulations</a> '
-                'or your <a href="https://www.worldcubeassociation.org/delegates" '
-                'target="_blank" rel="noopener noreferrer">WCA Delegate</a> '
-                'for more information.'
-            ),
+            "answer": FALLBACK_ANSWER,
             "sources": [],
             "regulations_version": REGULATIONS_VERSION,
             "regulations_release_url": REGULATIONS_RELEASE_URL
         }
 
+
     context = "\n\n".join(
-        f"{r['id']}: {r['text']}"
+        f"Regulation {r['id']}:\n{r['text']}"
         for r in results
     )
 
+
     response = client.chat.completions.create(
         model="gpt-5.6-terra",
+
         messages=[
             {
                 "role": "system",
                 "content": SYSTEM_PROMPT
             },
+
             {
                 "role": "user",
-                "content": f"""
-Question:
-{question}
-
-Relevant Regulations:
-{context}
-"""
+                "content": (
+                    f"Question:\n"
+                    f"{question}\n\n"
+                    f"Supplied Regulations:\n"
+                    f"{context}"
+                )
             }
         ]
     )
 
+
     answer = response.choices[0].message.content
+
 
     return {
         "answer": answer,

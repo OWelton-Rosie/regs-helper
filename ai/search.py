@@ -1,5 +1,6 @@
 from openai import OpenAI
 from dotenv import load_dotenv
+
 import json
 import numpy as np
 
@@ -31,6 +32,7 @@ with open(
     "r",
     encoding="utf-8"
 ) as f:
+
     chunks = json.load(f)
 
 
@@ -46,6 +48,89 @@ def cosine_similarity(a, b):
     return np.dot(a, b) / (
         np.linalg.norm(a) * np.linalg.norm(b)
     )
+
+
+# -------------------------
+# Article / format detection
+# -------------------------
+
+def detect_article(query):
+
+    query = query.lower()
+
+    # Multi-Blind
+    if any(term in query for term in (
+        "multi-blind",
+        "multi blind",
+        "multiblind"
+    )):
+        return "H"
+
+    # Blindfolded
+    if any(term in query for term in (
+        "blindfolded",
+        "blindfold",
+        "blind solve"
+    )):
+        return "B"
+
+    # Fewest Moves
+    if any(term in query for term in (
+        "fewest moves",
+        "fewest move",
+        "fmc"
+    )):
+        return "E"
+
+    # Dual Rounds
+    if any(term in query for term in (
+        "dual rounds",
+        "dual round"
+    )):
+        return "9"
+
+    # Head to Head
+    if any(term in query for term in (
+        "head to head",
+        "head-to-head",
+        "head to head round"
+    )):
+        return "I"
+
+    return None
+
+
+def detect_format(query):
+
+    query = query.lower()
+
+    if any(term in query for term in (
+        "dual rounds",
+        "dual round"
+    )):
+        return "dual_rounds"
+
+    if any(term in query for term in (
+        "head to head",
+        "head-to-head"
+    )):
+        return "head_to_head"
+
+    if any(term in query for term in (
+        "fewest moves",
+        "fewest move",
+        "fmc"
+    )):
+        return "fewest_moves"
+
+    if any(term in query for term in (
+        "multi-blind",
+        "multi blind",
+        "multiblind"
+    )):
+        return "multi_blind"
+
+    return None
 
 
 # -------------------------
@@ -65,6 +150,9 @@ def search(query, top_k=5):
 
     query_lower = query.lower()
 
+    target_article = detect_article(query)
+    target_format = detect_format(query)
+
     for chunk in chunks:
 
         text_lower = chunk["text"].lower()
@@ -74,8 +162,51 @@ def search(query, top_k=5):
             chunk["embedding"]
         )
 
-        # Keyword boosts to improve relevance for certain terms.
-        # This is a bit of a bitch but seems to work.
+        article = chunk.get("article")
+
+        # -------------------------
+        # Article relevance
+        # -------------------------
+
+        if target_article and article == target_article:
+            score += 0.75
+
+        # -------------------------
+        # Explicit format relevance
+        # -------------------------
+
+        if target_format == "dual_rounds":
+
+            if "dual rounds" in text_lower:
+                score += 1.5
+
+            elif "dual round" in text_lower:
+                score += 1.25
+
+        elif target_format == "head_to_head":
+
+            if "head to head" in text_lower:
+                score += 1.5
+
+            elif "head-to-head" in text_lower:
+                score += 1.5
+
+        elif target_format == "fewest_moves":
+
+            if "fewest moves" in text_lower:
+                score += 1.0
+
+        elif target_format == "multi_blind":
+
+            if "multi-blind" in text_lower:
+                score += 1.0
+
+            elif "multi blind" in text_lower:
+                score += 1.0
+
+        # -------------------------
+        # Exact keyword boosts
+        # -------------------------
 
         if "+2" in query_lower and "+2" in text_lower:
             score += 1.0
@@ -100,22 +231,29 @@ def search(query, top_k=5):
 
         scored.append({
             "id": chunk["id"],
-            "regulation": chunk.get(
-                "regulation",
-                chunk["id"]
-            ),
+            "article": article,
             "text": chunk["text"],
             "score": score
         })
+
+
+    # -------------------------
+    # Sort
+    # -------------------------
 
     scored.sort(
         key=lambda x: x["score"],
         reverse=True
     )
 
+
+    # -------------------------
+    # Return results
+    # -------------------------
+
     return [
         {
-            "id": r["regulation"],
+            "id": r["id"],
             "text": r["text"]
         }
         for r in scored[:top_k]
@@ -131,6 +269,9 @@ if __name__ == "__main__":
     while True:
 
         q = input("Search > ")
+
+        if not q.strip():
+            continue
 
         results = search(q)
 
