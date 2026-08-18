@@ -194,4 +194,7 @@
 
 	{/if}
 
+	<br>
+	<p class="subtitle">Questions are logged with your IP address and may be processed by OpenAI to generate responses. <a href="/important-info#privacy">Learn more.</a></p>
 </div>
+

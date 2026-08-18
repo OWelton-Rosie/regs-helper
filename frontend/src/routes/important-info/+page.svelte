@@ -30,9 +30,20 @@
 <p>Abusive, automated, or excessive use of the service may result in access being restricted or blocked without notice. The app automatically limits the number of requests per IP address to 30 per hour. If you need more, <a href="https://oweltonrosie.com/contact" target="_blank" rel="noopener noreferrer">contact me</a> and we can sort something out.</p>
 
 
-<h2>Privacy</h2>
-<p>Questions submitted to the app (along with IP address, timestamp, and AI-generated responses) are logged for debugging, service improvement, and abuse prevention purposes. Users should not submit personal, confidential, or sensitive information.</p>
+<h2 id="privacy">Privacy</h2>
 
-<p>This app's code can be found on <a href="https://github.com/oweltonrosie/regs-helper" target="_blank" rel="noopener noreferrer">GitHub</a> for independent verification.</p>
+<p>Questions submitted to this app are logged along with the IP address from which the request was made, the date and time of the request, and the AI-generated response. This information is collected for operating and debugging the service, improving the service, preventing abuse, and investigating reports or other issues affecting the integrity or security of the service.</p>
 
-<p>This app is hosted on Render on Cloudflare. Their privacy policies can be found <a href="https://render.com/privacy" target="_blank" rel="noopener noreferrer">here</a> and <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">here</a>.</p>
+<p>Questions are sent to OpenAI through its API so that an AI-generated response can be produced. Please do not submit personal, confidential, sensitive, or otherwise private information.</p>
+
+<p>Logged information may be reviewed by the operator (<a href="https://oweltonrosie.com" target="_blank" rel="noopener noreferrer">me</a>) of this service. Where reasonably necessary, information may also be disclosed to relevant third parties, such as the World Cube Association or its committees, where this is necessary to investigate suspected abuse, cheating, security issues, or other matters relating to the operation or integrity of the service.</p>
+
+<p>Providing information to this app is voluntary. You can use the service without providing your name, email address, or other identifying information. An IP address is automatically available to the server when you submit a question and is logged as described above.</p>
+
+<p>Logged information is retained only for as long as reasonably necessary for the purposes described above, after which it may be deleted.</p>
+
+<p>You may request access to, or correction of, personal information that this service holds about you. For privacy questions or requests, please contact me <a href="https://oweltonrosie.com/contact" target="_blank" rel="noopener noreferrer">here</a>.</p>
+
+<p>This app's code can be found on <a href="https://github.com/oweltonrosie/regs-helper" target="_blank" rel="noopener noreferrer">GitHub</a>for independent verification.</p>
+
+<p>This app is hosted using <a href="https://render.com/privacy" target="_blank" rel="noopener noreferrer">Render</a>and <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare</a>. Questions are processed using the <a href="https://openai.com/api/" target="_blank" rel="noopener noreferrer">OpenAI's API</a>. These providers have their own privacy policies and terms.</p>

@@ -42,7 +42,7 @@ TEST_CASES = [
         "name": "Judge resets timer",
         "question": "Does the judge reset the timer or the competitor?",
         "expected": ["B2a", "A3b"],
-    },
+    }
 ]
 
 
