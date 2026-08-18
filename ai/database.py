@@ -1,13 +1,24 @@
 import sqlite3
+
 from pathlib import Path
 from datetime import datetime
+
 
 DB_PATH = Path(__file__).parent / "questions.db"
 
 
+# -------------------------
+# Connection
+# -------------------------
+
 def get_connection():
+
     return sqlite3.connect(DB_PATH)
 
+
+# -------------------------
+# Initialise database
+# -------------------------
 
 def initialize_database():
 
@@ -37,6 +48,10 @@ def initialize_database():
     conn.commit()
     conn.close()
 
+
+# -------------------------
+# Questions
+# -------------------------
 
 def log_question(
     ip_address: str,
@@ -69,6 +84,30 @@ def log_question(
     conn.close()
 
 
+def import_questions(rows):
+
+    conn = get_connection()
+
+    conn.executemany(
+        """
+        INSERT INTO questions
+        (
+            timestamp,
+            ip_address,
+            question,
+            answer
+        )
+        VALUES (?, ?, ?, ?)
+        """,
+        rows
+    )
+
+    conn.commit()
+    conn.close()
+
+    return len(rows)
+
+
 def get_recent_questions(limit=50):
 
     conn = get_connection()
@@ -91,6 +130,10 @@ def get_recent_questions(limit=50):
 
     return rows
 
+
+# -------------------------
+# Reports
+# -------------------------
 
 def log_report(
     question: str,
@@ -124,6 +167,31 @@ def log_report(
 
     conn.commit()
     conn.close()
+
+
+def import_reports(rows):
+
+    conn = get_connection()
+
+    conn.executemany(
+        """
+        INSERT INTO reports
+        (
+            timestamp,
+            question,
+            answer,
+            sources,
+            comment
+        )
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        rows
+    )
+
+    conn.commit()
+    conn.close()
+
+    return len(rows)
 
 
 def get_recent_reports(limit=50):

@@ -617,4 +617,53 @@ a:hover {
 		color: #3fb950;
 	}
 
+	.import-button {
+	background: #1f6feb;
+}
+
+.import-button:hover {
+	background: #388bfd;
+}
+
+}
+
+.import-button {
+	display: inline-flex;
+
+	align-items: center;
+	justify-content: center;
+
+	margin-top: 1rem;
+	padding: 0.85rem 1.4rem;
+
+	border: none;
+	border-radius: 12px;
+
+	background: #0969da;
+	color: white;
+
+	font-size: 1rem;
+	font-weight: 600;
+
+	cursor: pointer;
+
+	transition:
+		transform 0.15s,
+		background 0.15s,
+		opacity 0.15s;
+}
+
+.import-button:hover {
+	background: #0860ca;
+	transform: translateY(-1px);
+}
+
+.import-button:active {
+	transform: translateY(0);
+}
+
+.import-button:has(input:disabled) {
+	cursor: not-allowed;
+	opacity: 0.5;
+	transform: none;
 }

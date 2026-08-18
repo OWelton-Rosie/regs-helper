@@ -19,20 +19,28 @@ from ai.database import (
     log_question,
     get_recent_questions,
     log_report,
-    get_recent_reports
+    get_recent_reports,
+    import_questions,
+    import_reports
 )
 
 from ai.rate_limit import is_rate_limited
 
 
-load_dotenv()
+# -------------------------
+# Environment
+# -------------------------
 
+load_dotenv()
 
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 
-app = FastAPI()
+# -------------------------
+# App
+# -------------------------
 
+app = FastAPI()
 
 initialize_database()
 
@@ -84,6 +92,10 @@ async def ask_question(
     return result
 
 
+# -------------------------
+# Health
+# -------------------------
+
 @app.get("/health")
 async def health():
 
@@ -126,7 +138,7 @@ async def report(
 
 
 # -------------------------
-# Admin API
+# Admin authentication
 # -------------------------
 
 @app.post("/login")
@@ -148,6 +160,10 @@ async def login(
     }
 
 
+# -------------------------
+# Admin questions
+# -------------------------
+
 @app.post("/questions")
 async def questions(
     data: dict = Body(...)
@@ -167,6 +183,10 @@ async def questions(
     }
 
 
+# -------------------------
+# Admin reports
+# -------------------------
+
 @app.post("/reports")
 async def reports(
     data: dict = Body(...)
@@ -183,4 +203,161 @@ async def reports(
 
     return {
         "reports": get_recent_reports()
+    }
+
+
+# -------------------------
+# Import logs
+# -------------------------
+
+@app.post("/import-logs")
+async def import_logs(
+    data: dict = Body(...)
+):
+
+    password = data.get("password")
+    log_type = data.get("type")
+    rows = data.get("rows")
+
+
+    # -------------------------
+    # Authentication
+    # -------------------------
+
+    if password != ADMIN_PASSWORD:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect password"
+        )
+
+
+    # -------------------------
+    # Validate request
+    # -------------------------
+
+    if log_type not in (
+        "questions",
+        "reports"
+    ):
+
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid log type"
+        )
+
+    if not isinstance(rows, list):
+
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid rows"
+        )
+
+
+    # -------------------------
+    # Validate rows
+    # -------------------------
+
+    expected_columns = (
+        4
+        if log_type == "questions"
+        else 5
+    )
+
+    valid_rows = []
+
+
+    for row in rows:
+
+        if not isinstance(row, list):
+
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid CSV row"
+            )
+
+        if len(row) != expected_columns:
+
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Invalid questions CSV"
+                    if log_type == "questions"
+                    else "Invalid reports CSV"
+                )
+            )
+
+        # Ignore incomplete rows.
+        if log_type == "questions":
+
+            (
+                timestamp,
+                ip_address,
+                question,
+                answer
+            ) = row
+
+            if not question or not answer:
+                continue
+
+        else:
+
+            (
+                timestamp,
+                question,
+                answer,
+                sources,
+                comment
+            ) = row
+
+            if (
+                not question
+                or not answer
+                or not comment
+            ):
+                continue
+
+        valid_rows.append(row)
+
+
+    # -------------------------
+    # Import
+    # -------------------------
+
+    try:
+
+        if log_type == "questions":
+
+            imported = import_questions(
+                valid_rows
+            )
+
+        else:
+
+            imported = import_reports(
+                valid_rows
+            )
+
+
+    except Exception as error:
+
+        print(
+            "Failed to import logs:",
+            error
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to import logs"
+        )
+
+
+    # -------------------------
+    # Response
+    # -------------------------
+
+    return {
+        "success": True,
+        "imported": imported,
+        "type": log_type
     }

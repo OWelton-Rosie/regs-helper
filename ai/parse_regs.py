@@ -31,20 +31,57 @@ with open(
 # Parse regulations
 # -------------------------
 
-# Regulation IDs look like:
+# Regulation IDs can look like:
 #
 # 1a)
 # 1a1)
 # 1c+)
 # 1c++)
+# 1h1)
+# 1h1a)
 # A1)
+# A1a)
 # B2a)
-# etc.
+# H1a1)
+# 11e+++++++)
 #
-# The important part is that the ID occurs
-# at the beginning of a line.
+# The ID always occurs at the beginning
+# of a line.
+#
+# Structure:
+#
+#   optional uppercase article letter
+#   one or more digits
+#   optional lowercase letter
+#   optional additional digits
+#   zero or more +
+#
+# Examples:
+#
+#   1a
+#   1a1
+#   1h1a
+#   A1
+#   A1a
+#   H1a1
+#   11e+++++++
+#
+# The lookahead ensures that each regulation
+# becomes its own chunk.
 
-pattern = r"^([A-Z]?\d+[a-z]?\+*)\)\s+(.*?)(?=^[A-Z]?\d+[a-z]?\+*\)\s+|\Z)"
+REGULATION_ID = (
+    r"[A-Z]?"
+    r"\d+"
+    r"[a-z]?"
+    r"\d*"
+    r"\+*"
+)
+
+pattern = (
+    rf"^({REGULATION_ID})\)\s+"
+    rf"(.*?)(?=^{REGULATION_ID}\)\s+|\Z)"
+)
+
 
 matches = re.findall(
     pattern,
