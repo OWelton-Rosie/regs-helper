@@ -11,6 +11,8 @@
     <h2>Contact</h2>
     <p>If you've got questions, feedback, or just want to chat, you can contact me <a href="https://oweltonrosie.com/contact" target="_blank" rel="noopener noreferrer">here</a>. If the app isn't working as expected and you've been using it a lot, you may have hit the rate limit. In this case, you'll need to wait an hour before the limit resets.</p>
 
+    <p>I've also got threads on <a href="https://www.speedsolving.com/threads/ai-regulations-assistant.97545/" target="_blank" rel="noopener noreferrer">Speedsolving.com</a> and the <a href="https://forum.worldcubeassociation.org/t/ai-regulations-assistant/67623/5" target="_blank" rel="noopener noreferrer">WCA Forum</a>.</p>
+
     <h2>Contributing</h2>
     <p>This app is open source and available on <a href="https://github.com/OWelton-Rosie/regs-helper" target="_blank" rel="noopener noreferrer">GitHub</a>. Contributions are welcome!</p>
 
