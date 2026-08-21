@@ -316,6 +316,7 @@ async def import_logs(
             ) = row
 
             if not question or not answer:
+
                 continue
 
 
@@ -338,6 +339,7 @@ async def import_logs(
                 or not answer
                 or not comment
             ):
+
                 continue
 
 
