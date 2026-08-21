@@ -1,10 +1,25 @@
-import sqlite3
+import os
 
-from pathlib import Path
 from datetime import datetime
 
+import psycopg
 
-DB_PATH = Path(__file__).parent / "questions.db"
+from dotenv import load_dotenv
+
+
+# -------------------------
+# Environment
+# -------------------------
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL environment variable is not set."
+    )
 
 
 # -------------------------
@@ -13,7 +28,9 @@ DB_PATH = Path(__file__).parent / "questions.db"
 
 def get_connection():
 
-    return sqlite3.connect(DB_PATH)
+    return psycopg.connect(
+        DATABASE_URL
+    )
 
 
 # -------------------------
@@ -22,31 +39,30 @@ def get_connection():
 
 def initialize_database():
 
-    conn = get_connection()
+    with get_connection() as conn:
 
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS questions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestamp TEXT NOT NULL,
-            ip_address TEXT NOT NULL,
-            question TEXT NOT NULL,
-            answer TEXT NOT NULL
-        )
-    """)
+        with conn.cursor() as cursor:
 
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS reports (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestamp TEXT NOT NULL,
-            question TEXT NOT NULL,
-            answer TEXT NOT NULL,
-            sources TEXT NOT NULL,
-            comment TEXT NOT NULL
-        )
-    """)
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS questions (
+                    id SERIAL PRIMARY KEY,
+                    timestamp TEXT NOT NULL,
+                    ip_address TEXT NOT NULL,
+                    question TEXT NOT NULL,
+                    answer TEXT NOT NULL
+                )
+            """)
 
-    conn.commit()
-    conn.close()
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS reports (
+                    id SERIAL PRIMARY KEY,
+                    timestamp TEXT NOT NULL,
+                    question TEXT NOT NULL,
+                    answer TEXT NOT NULL,
+                    sources TEXT NOT NULL,
+                    comment TEXT NOT NULL
+                )
+            """)
 
 
 # -------------------------
@@ -59,74 +75,77 @@ def log_question(
     answer: str
 ):
 
-    conn = get_connection()
+    with get_connection() as conn:
 
-    conn.execute(
-        """
-        INSERT INTO questions
-        (
-            timestamp,
-            ip_address,
-            question,
-            answer
-        )
-        VALUES (?, ?, ?, ?)
-        """,
-        (
-            datetime.now().isoformat(),
-            ip_address,
-            question,
-            answer
-        )
-    )
+        with conn.cursor() as cursor:
 
-    conn.commit()
-    conn.close()
+            cursor.execute(
+                """
+                INSERT INTO questions
+                (
+                    timestamp,
+                    ip_address,
+                    question,
+                    answer
+                )
+                VALUES (%s, %s, %s, %s)
+                """,
+                (
+                    datetime.now().isoformat(),
+                    ip_address,
+                    question,
+                    answer
+                )
+            )
 
 
 def import_questions(rows):
 
-    conn = get_connection()
+    if not rows:
+        return 0
 
-    conn.executemany(
-        """
-        INSERT INTO questions
-        (
-            timestamp,
-            ip_address,
-            question,
-            answer
-        )
-        VALUES (?, ?, ?, ?)
-        """,
-        rows
-    )
+    with get_connection() as conn:
 
-    conn.commit()
-    conn.close()
+        with conn.cursor() as cursor:
+
+            cursor.executemany(
+                """
+                INSERT INTO questions
+                (
+                    timestamp,
+                    ip_address,
+                    question,
+                    answer
+                )
+                VALUES (%s, %s, %s, %s)
+                """,
+                rows
+            )
 
     return len(rows)
 
 
 def get_recent_questions(limit=50):
 
-    conn = get_connection()
+    with get_connection() as conn:
 
-    rows = conn.execute(
-        """
-        SELECT
-            timestamp,
-            ip_address,
-            question,
-            answer
-        FROM questions
-        ORDER BY id DESC
-        LIMIT ?
-        """,
-        (limit,)
-    ).fetchall()
+        with conn.cursor() as cursor:
 
-    conn.close()
+            cursor.execute(
+                """
+                SELECT
+                    timestamp,
+                    ip_address,
+                    question,
+                    answer
+                FROM questions
+                ORDER BY id DESC
+                LIMIT %s
+                """,
+                (limit,)
+            )
+
+            rows = cursor.fetchall()
 
     return rows
 
@@ -142,77 +161,80 @@ def log_report(
     comment: str
 ):
 
-    conn = get_connection()
+    with get_connection() as conn:
 
-    conn.execute(
-        """
-        INSERT INTO reports
-        (
-            timestamp,
-            question,
-            answer,
-            sources,
-            comment
-        )
-        VALUES (?, ?, ?, ?, ?)
-        """,
-        (
-            datetime.now().isoformat(),
-            question,
-            answer,
-            sources,
-            comment
-        )
-    )
+        with conn.cursor() as cursor:
 
-    conn.commit()
-    conn.close()
+            cursor.execute(
+                """
+                INSERT INTO reports
+                (
+                    timestamp,
+                    question,
+                    answer,
+                    sources,
+                    comment
+                )
+                VALUES (%s, %s, %s, %s, %s)
+                """,
+                (
+                    datetime.now().isoformat(),
+                    question,
+                    answer,
+                    sources,
+                    comment
+                )
+            )
 
 
 def import_reports(rows):
 
-    conn = get_connection()
+    if not rows:
+        return 0
 
-    conn.executemany(
-        """
-        INSERT INTO reports
-        (
-            timestamp,
-            question,
-            answer,
-            sources,
-            comment
-        )
-        VALUES (?, ?, ?, ?, ?)
-        """,
-        rows
-    )
+    with get_connection() as conn:
 
-    conn.commit()
-    conn.close()
+        with conn.cursor() as cursor:
+
+            cursor.executemany(
+                """
+                INSERT INTO reports
+                (
+                    timestamp,
+                    question,
+                    answer,
+                    sources,
+                    comment
+                )
+                VALUES (%s, %s, %s, %s, %s)
+                """,
+                rows
+            )
 
     return len(rows)
 
 
 def get_recent_reports(limit=50):
 
-    conn = get_connection()
+    with get_connection() as conn:
 
-    rows = conn.execute(
-        """
-        SELECT
-            timestamp,
-            question,
-            answer,
-            sources,
-            comment
-        FROM reports
-        ORDER BY id DESC
-        LIMIT ?
-        """,
-        (limit,)
-    ).fetchall()
+        with conn.cursor() as cursor:
 
-    conn.close()
+            cursor.execute(
+                """
+                SELECT
+                    timestamp,
+                    question,
+                    answer,
+                    sources,
+                    comment
+                FROM reports
+                ORDER BY id DESC
+                LIMIT %s
+                """,
+                (limit,)
+            )
+
+            rows = cursor.fetchall()
 
     return rows
