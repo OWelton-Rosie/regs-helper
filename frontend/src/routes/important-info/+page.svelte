@@ -44,6 +44,6 @@
 
 <p>You may request access to, or correction of, personal information that this service holds about you. For privacy questions or requests, please contact me <a href="https://oweltonrosie.com/contact" target="_blank" rel="noopener noreferrer">here</a>.</p>
 
-<p>This app's code can be found on <a href="https://github.com/oweltonrosie/regs-helper" target="_blank" rel="noopener noreferrer">GitHub</a>for independent verification.</p>
+<p>This app's code can be found on <a href="https://github.com/oweltonrosie/regs-helper" target="_blank" rel="noopener noreferrer">GitHub</a> for independent verification.</p>
 
-<p>This app is hosted using <a href="https://render.com/privacy" target="_blank" rel="noopener noreferrer">Render</a>and <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare</a>. Questions are processed using the <a href="https://openai.com/api/" target="_blank" rel="noopener noreferrer">OpenAI's API</a>. These providers have their own privacy policies and terms.</p>
+<p>This app is hosted using <a href="https://render.com/privacy" target="_blank" rel="noopener noreferrer">Render</a> and <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare</a>. Questions are processed using the <a href="https://openai.com/api/" target="_blank" rel="noopener noreferrer">OpenAI's API</a>. These providers have their own privacy policies and terms.</p>
