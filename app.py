@@ -1,6 +1,8 @@
 import os
 import json
 
+from contextlib import asynccontextmanager
+
 from dotenv import load_dotenv
 
 from fastapi import (
@@ -37,12 +39,24 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 
 # -------------------------
+# Application lifespan
+# -------------------------
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+
+    initialize_database()
+
+    yield
+
+
+# -------------------------
 # App
 # -------------------------
 
-app = FastAPI()
-
-initialize_database()
+app = FastAPI(
+    lifespan=lifespan
+)
 
 
 # -------------------------
@@ -287,7 +301,11 @@ async def import_logs(
                 )
             )
 
-        # Ignore incomplete rows.
+
+        # -------------------------
+        # Questions
+        # -------------------------
+
         if log_type == "questions":
 
             (
@@ -299,6 +317,11 @@ async def import_logs(
 
             if not question or not answer:
                 continue
+
+
+        # -------------------------
+        # Reports
+        # -------------------------
 
         else:
 
@@ -316,6 +339,7 @@ async def import_logs(
                 or not comment
             ):
                 continue
+
 
         valid_rows.append(row)
 
