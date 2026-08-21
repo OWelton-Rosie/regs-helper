@@ -13,14 +13,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-
-if not DATABASE_URL:
-    raise RuntimeError(
-        "DATABASE_URL environment variable is not set."
-    )
-
 
 # -------------------------
 # Connection
@@ -28,8 +20,18 @@ if not DATABASE_URL:
 
 def get_connection():
 
+    database_url = os.getenv(
+        "DATABASE_URL"
+    )
+
+    if not database_url:
+
+        raise RuntimeError(
+            "DATABASE_URL environment variable is not set."
+        )
+
     return psycopg.connect(
-        DATABASE_URL
+        database_url
     )
 
 
@@ -102,6 +104,7 @@ def log_question(
 def import_questions(rows):
 
     if not rows:
+
         return 0
 
     with get_connection() as conn:
@@ -125,7 +128,9 @@ def import_questions(rows):
     return len(rows)
 
 
-def get_recent_questions(limit=50):
+def get_recent_questions(
+    limit=50
+):
 
     with get_connection() as conn:
 
@@ -190,6 +195,7 @@ def log_report(
 def import_reports(rows):
 
     if not rows:
+
         return 0
 
     with get_connection() as conn:
@@ -214,7 +220,9 @@ def import_reports(rows):
     return len(rows)
 
 
-def get_recent_reports(limit=50):
+def get_recent_reports(
+    limit=50
+):
 
     with get_connection() as conn:
 
