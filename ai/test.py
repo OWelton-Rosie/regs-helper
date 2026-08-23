@@ -5,15 +5,21 @@ Run with:
 
     python3 -m ai.test
 
-These tests cover both:
-1. Search/retrieval
-2. Answer generation
+These tests cover:
 
-The tests are intentionally conservative. An answer should only be considered
-correct when it is supported by the supplied regulations.
+1. Configuration
+2. Search/retrieval
+3. Answer generation
+
+The tests are intentionally conservative. An answer should only be
+considered correct when it is supported by the supplied regulations.
 """
 
-from ai.ask import ask
+from ai.ask import (
+    ask,
+    SYSTEM_PROMPT_PATH,
+)
+
 from ai.search import search
 
 
@@ -25,7 +31,8 @@ SEARCH_TESTS = [
     {
         "name": "Multi-Blind minimum",
         "question": (
-            "What is the minimum number of cubes allowed in Multi-blind?"
+            "What is the minimum number of cubes allowed "
+            "in Multi-blind?"
         ),
         "expected": ["H1a"],
     },
@@ -33,7 +40,8 @@ SEARCH_TESTS = [
     {
         "name": "Multi-Blind maximum",
         "question": (
-            "What is the maximum number of cubes allowed in Multi-blind?"
+            "What is the maximum number of cubes allowed "
+            "in Multi-blind?"
         ),
         "expected": ["H1a"],
     },
@@ -41,7 +49,8 @@ SEARCH_TESTS = [
     {
         "name": "Multi-Blind number cannot change",
         "question": (
-            "Can I change my mind about the number of Multi-blind cubes?"
+            "Can I change my mind about the number "
+            "of Multi-blind cubes?"
         ),
         "expected": ["H1a1"],
     },
@@ -49,8 +58,8 @@ SEARCH_TESTS = [
     {
         "name": "Multi-Blind center cap during attempt",
         "question": (
-            "If a center cap falls off during 3x3x3 Multi-Blind, "
-            "is the attempt disqualified?"
+            "If a center cap falls off during 3x3x3 "
+            "Multi-Blind, is the attempt disqualified?"
         ),
         "expected": ["H1e"],
     },
@@ -114,7 +123,8 @@ ANSWER_TESTS = [
     {
         "name": "Multi-Blind minimum",
         "question": (
-            "What is the minimum number of cubes allowed in Multi-blind?"
+            "What is the minimum number of cubes allowed "
+            "in Multi-blind?"
         ),
         "expected_answerable": True,
         "expected_regulations": ["H1a"],
@@ -123,7 +133,8 @@ ANSWER_TESTS = [
     {
         "name": "Multi-Blind maximum",
         "question": (
-            "What is the maximum number of cubes allowed in Multi-blind?"
+            "What is the maximum number of cubes allowed "
+            "in Multi-blind?"
         ),
         "expected_answerable": False,
         "expected_regulations": [],
@@ -132,7 +143,8 @@ ANSWER_TESTS = [
     {
         "name": "Multi-Blind number cannot change",
         "question": (
-            "Can I change my mind about the number of Multi-blind cubes?"
+            "Can I change my mind about the number "
+            "of Multi-blind cubes?"
         ),
         "expected_answerable": True,
         "expected_regulations": ["H1a1"],
@@ -141,8 +153,8 @@ ANSWER_TESTS = [
     {
         "name": "Multi-Blind center cap during attempt",
         "question": (
-            "If a center cap falls off during 3x3x3 Multi-Blind, "
-            "is the attempt disqualified?"
+            "If a center cap falls off during 3x3x3 "
+            "Multi-Blind, is the attempt disqualified?"
         ),
         "expected_answerable": False,
         "expected_regulations": [],
@@ -163,7 +175,10 @@ ANSWER_TESTS = [
             "Does the judge reset the timer or the competitor?"
         ),
         "expected_answerable": True,
-        "expected_regulations": ["B2a", "A3b"],
+        "expected_regulations": [
+            "B2a",
+            "A3b",
+        ],
     },
 
     {
@@ -253,8 +268,8 @@ def normalise_ids(ids):
     """
 
     return {
-        str(regulation).lower()
-        for regulation in ids
+        str(reg).lower()
+        for reg in ids
     }
 
 
@@ -273,9 +288,9 @@ def get_answer_regulations(result):
     """
     Extract regulation IDs from an answer result.
 
-    Supports the current dictionary format and is deliberately defensive
-    so the test suite does not crash if the answer implementation changes
-    slightly.
+    Supports the current dictionary format and is deliberately
+    defensive so the test suite doesn't crash if the answer
+    implementation changes slightly.
     """
 
     regulations = result.get(
@@ -301,59 +316,214 @@ def get_answer_regulations(result):
 
 def print_answer(result):
     """
-    Print a structured answer result.
-
-    ask() returns the answer, explanation, and regulation IDs separately,
-    so they are printed here without duplicating any sections.
+    Print an answer in a useful debugging format.
     """
 
-    print()
-
-    print("Answer:")
-
-    print(
-        result.get(
-            "answer",
-            ""
-        )
-    )
-
-    explanation = result.get(
-        "explanation",
-        ""
-    )
-
-    if explanation:
+    if not isinstance(
+        result,
+        dict
+    ):
 
         print()
+        print("Answer:")
+        print(result)
 
-        print("Explanation:")
+        return
 
-        print(
-            explanation
-        )
-
-    regulations = get_answer_regulations(
-        result
-    )
 
     print()
 
-    print("Relevant Regulations:")
+    if "answer" in result:
 
-    if regulations:
+        print("Answer:")
+        print(
+            result["answer"]
+        )
 
-        for regulation in regulations:
 
-            print(
-                f"- {regulation}"
-            )
+    if "explanation" in result:
+
+        print()
+        print("Explanation:")
+        print(
+            result["explanation"]
+        )
+
+
+    if "regulations" in result:
+
+        print()
+        print("Relevant Regulations:")
+
+        regulations = result[
+            "regulations"
+        ]
+
+        if regulations:
+
+            for regulation in regulations:
+
+                print(
+                    f"- {regulation}"
+                )
+
+        else:
+
+            print("none")
+
+
+# ============================================================
+# Configuration tests
+# ============================================================
+
+def run_configuration_tests():
+
+    print()
+    print(
+        "WCA Regulations Assistant — Configuration Tests"
+    )
+    print(
+        "============================================================"
+    )
+    print()
+
+    passed = 0
+    failed = 0
+
+
+    # --------------------------------------------------------
+    # System prompt exists
+    # --------------------------------------------------------
+
+    print(
+        "Test: System prompt exists"
+    )
+
+    if SYSTEM_PROMPT_PATH.exists():
+
+        print("PASS")
+        passed += 1
 
     else:
 
+        print("FAIL")
+
         print(
-            "none"
+            f"Missing: {SYSTEM_PROMPT_PATH}"
         )
+
+        failed += 1
+
+    print()
+
+
+    # --------------------------------------------------------
+    # System prompt is not empty
+    # --------------------------------------------------------
+
+    print(
+        "Test: System prompt is not empty"
+    )
+
+    try:
+
+        prompt = SYSTEM_PROMPT_PATH.read_text(
+            encoding="utf-8"
+        ).strip()
+
+        if prompt:
+
+            print("PASS")
+            passed += 1
+
+        else:
+
+            print("FAIL")
+            print(
+                "System prompt is empty."
+            )
+
+            failed += 1
+
+    except Exception as exc:
+
+        print("FAIL")
+
+        print(
+            f"Error: {type(exc).__name__}: {exc}"
+        )
+
+        failed += 1
+
+    print()
+
+
+    # --------------------------------------------------------
+    # Basic prompt sanity
+    # --------------------------------------------------------
+
+    print(
+        "Test: System prompt contains JSON instructions"
+    )
+
+    try:
+
+        prompt = SYSTEM_PROMPT_PATH.read_text(
+            encoding="utf-8"
+        )
+
+        required_phrases = (
+            "answerable",
+            "regulations",
+            "explanation",
+            "Return ONLY valid JSON",
+        )
+
+        missing = [
+            phrase
+            for phrase in required_phrases
+            if phrase not in prompt
+        ]
+
+        if not missing:
+
+            print("PASS")
+            passed += 1
+
+        else:
+
+            print("FAIL")
+
+            print(
+                "Missing prompt phrases: "
+                + ", ".join(missing)
+            )
+
+            failed += 1
+
+    except Exception as exc:
+
+        print("FAIL")
+
+        print(
+            f"Error: {type(exc).__name__}: {exc}"
+        )
+
+        failed += 1
+
+    print()
+
+
+    print(
+        "============================================================"
+    )
+
+    print(
+        f"Configuration: {passed} passed, "
+        f"{failed} failed"
+    )
+
+    return passed, failed
 
 
 # ============================================================
@@ -363,24 +533,21 @@ def print_answer(result):
 def run_search_tests():
 
     print()
-
     print(
         "WCA Regulations Assistant — Search Regression Tests"
     )
-
     print(
         "============================================================"
     )
-
     print()
 
     passed = 0
     failed = 0
 
+
     for test in SEARCH_TESTS:
 
         name = test["name"]
-
         question = test["question"]
 
         print(
@@ -390,6 +557,7 @@ def run_search_tests():
         print(
             f"Question: {question}"
         )
+
 
         try:
 
@@ -404,6 +572,7 @@ def run_search_tests():
             retrieved_normalised = normalise_ids(
                 retrieved
             )
+
 
             expected = test.get(
                 "expected",
@@ -420,6 +589,7 @@ def run_search_tests():
                 []
             )
 
+
             expected_normalised = normalise_ids(
                 expected
             )
@@ -432,11 +602,12 @@ def run_search_tests():
                 forbidden
             )
 
+
             success = True
 
 
             # ------------------------------------------------
-            # Expected primary regulations
+            # Expected regulations
             # ------------------------------------------------
 
             if expected:
@@ -449,7 +620,7 @@ def run_search_tests():
 
 
             # ------------------------------------------------
-            # Expected complete set
+            # Expected all regulations
             # ------------------------------------------------
 
             if expected_all:
@@ -474,24 +645,14 @@ def run_search_tests():
                     success = False
 
 
-            # ------------------------------------------------
-            # Result
-            # ------------------------------------------------
-
             if success:
 
-                print(
-                    "PASS"
-                )
-
+                print("PASS")
                 passed += 1
 
             else:
 
-                print(
-                    "FAIL"
-                )
-
+                print("FAIL")
                 failed += 1
 
 
@@ -533,9 +694,7 @@ def run_search_tests():
 
             failed += 1
 
-            print(
-                "FAIL"
-            )
+            print("FAIL")
 
             print(
                 f"Error: {type(exc).__name__}: {exc}"
@@ -554,10 +713,7 @@ def run_search_tests():
         f"{failed} failed"
     )
 
-    return (
-        passed,
-        failed
-    )
+    return passed, failed
 
 
 # ============================================================
@@ -567,24 +723,21 @@ def run_search_tests():
 def run_answer_tests():
 
     print()
-
     print(
         "WCA Regulations Assistant — Answer Regression Tests"
     )
-
     print(
         "============================================================"
     )
-
     print()
 
     passed = 0
     failed = 0
 
+
     for test in ANSWER_TESTS:
 
         name = test["name"]
-
         question = test["question"]
 
         print(
@@ -595,6 +748,7 @@ def run_answer_tests():
             f"Question: {question}"
         )
 
+
         try:
 
             result = ask(
@@ -603,7 +757,7 @@ def run_answer_tests():
 
 
             # ------------------------------------------------
-            # Basic result validation
+            # Result shape
             # ------------------------------------------------
 
             if not isinstance(
@@ -611,9 +765,7 @@ def run_answer_tests():
                 dict
             ):
 
-                print(
-                    "FAIL"
-                )
+                print("FAIL")
 
                 print(
                     "ask() did not return a dictionary."
@@ -630,18 +782,17 @@ def run_answer_tests():
                 continue
 
 
-            # ------------------------------------------------
-            # Extract result
-            # ------------------------------------------------
-
             actual_answerable = result.get(
                 "answerable",
                 False
             )
 
-            actual_regulations = get_answer_regulations(
-                result
+            actual_regulations = (
+                get_answer_regulations(
+                    result
+                )
             )
+
 
             expected_answerable = test[
                 "expected_answerable"
@@ -678,7 +829,10 @@ def run_answer_tests():
             # Answerability
             # ------------------------------------------------
 
-            if actual_answerable != expected_answerable:
+            if (
+                actual_answerable
+                != expected_answerable
+            ):
 
                 success = False
 
@@ -715,18 +869,12 @@ def run_answer_tests():
 
             if success:
 
-                print(
-                    "PASS"
-                )
-
+                print("PASS")
                 passed += 1
 
             else:
 
-                print(
-                    "FAIL"
-                )
-
+                print("FAIL")
                 failed += 1
 
 
@@ -776,9 +924,7 @@ def run_answer_tests():
 
             failed += 1
 
-            print(
-                "FAIL"
-            )
+            print("FAIL")
 
             print(
                 f"Error: {type(exc).__name__}: {exc}"
@@ -797,10 +943,7 @@ def run_answer_tests():
         f"{failed} failed"
     )
 
-    return (
-        passed,
-        failed
-    )
+    return passed, failed
 
 
 # ============================================================
@@ -808,6 +951,10 @@ def run_answer_tests():
 # ============================================================
 
 def main():
+
+    config_passed, config_failed = (
+        run_configuration_tests()
+    )
 
     search_passed, search_failed = (
         run_search_tests()
@@ -819,18 +966,19 @@ def main():
 
 
     total_passed = (
-        search_passed
+        config_passed
+        + search_passed
         + answer_passed
     )
 
     total_failed = (
-        search_failed
+        config_failed
+        + search_failed
         + answer_failed
     )
 
 
     print()
-
     print(
         "============================================================"
     )
