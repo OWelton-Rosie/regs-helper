@@ -1,3 +1,2 @@
 *.md linguist-language=Markdown linguist-detectable=true
-*.txt linguist-language=Text linguist-detectable=true
 *.sh linguist-language=Shell linguist-detectable=true
