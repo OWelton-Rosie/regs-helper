@@ -43,45 +43,30 @@ git clone https://github.com/OWelton-Rosie/regs-helper
 cd regs-helper
 ```
 
-Create a virtual environment:
+Run the setup script:
 
 ```bash
-python -m venv venv
-
-source venv/bin/activate
+./setup.sh
 ```
 
-Install backend dependencies:
+The setup script will:
 
-```bash
-pip install -r requirements.txt
-```
+* Check that Python 3.13+, Node.js, and npm are installed.
+* Create a Python virtual environment.
+* Install the backend dependencies from `requirements.txt`.
+* Install the frontend dependencies with `npm install`.
+* Create `.env` from `.env.example` if it does not already exist.
+* Create `frontend/.env` from `frontend/.env.example` if it does not already exist.
 
-Install frontend dependencies:
-
-```bash
-cd frontend
-
-npm install
-
-cd ..
-```
-
-Copy the example environment files:
-
-```bash
-cp .env.example .env
-
-cp frontend/.env.example frontend/.env
-```
-
-Populate `.env` with your OpenAI API key, admin password, OpenAI model, and database URL.
+The script does not populate secrets or other environment-specific configuration. After running it, edit `.env` with the required values.
 
 Start the app:
 
 **Backend:**
 
 ```bash
+source venv/bin/activate
+
 uvicorn app:app --reload
 ```
 
@@ -105,10 +90,10 @@ There's also a [build script](https://github.com/OWelton-Rosie/regs-helper/blob/
 ./build.sh
 ```
 
-Both scripts will need to be made executable with:
+Both `dev.sh` and `build.sh` will need to be made executable with:
 
 ```bash
-chmod +x [script name]
+chmod +x dev.sh build.sh
 ```
 
 ## Environment Variables
@@ -133,7 +118,7 @@ DATABASE_URL=Your_Database_URL_Here
 VITE_API_URL=http://127.0.0.1:8000
 ```
 
-Copy the example files with:
+The setup script creates both environment files from their respective examples. They can also be created manually with:
 
 ```bash
 cp .env.example .env
@@ -154,6 +139,9 @@ cp frontend/.env.example frontend/.env
 │   └── test.py          Regression tests
 ├── frontend/            SvelteKit frontend
 ├── app.py               FastAPI application
+├── setup.sh             Development environment setup
+├── dev.sh               Development startup script
+├── build.sh             Production build script
 ├── requirements.txt
 └── README.md
 ```
